@@ -1,0 +1,40 @@
+<div class="container">
+  <div class="row">
+    <div class="col my-4">Edit Profiles</div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <form action="/profiles/<%= @profile['id'] %>" method="post">
+        <div class="mb-3">
+          <label for="name" class="form-label">Name</label>
+          <input type="text" class="form-control" id="name" name="name" value="<%= @profile['name'] %> " disabled />
+        </div>
+        <div class="mb-3">
+          <label for="username" class="form-label">Username</label>
+          <input type="text" class="form-control" id="username" name="username" value="<%= @profile['username'] %> " disabled />
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input type="text" class="form-control" id="email" name="email" value="<%= @profile['email'] %> "  disabled />
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" class="form-control" id="password" name="password" value="<%= @profile['password'] %>" disabled />
+        </div>
+        <div class="mb-3">
+          <label for="re_password" class="form-label">Re-enter Password</label>
+          <input type="password" class="form-control" id="re_password" name="re_password" value="<%= @profile['password'] %>" disabled />
+        </div>
+
+        <div class="mb-3">
+          <label for="country" class="form-label">Country</label>
+          <select class="form-select" disabled aria-label="Default select example" id="country" name="country">
+            <option selected><%= @profile['country'] %></option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary float-end disabled">Submit</button>
+      </form>
+      <a class="btn btn-light" href="/user_list">Back</a>
+    </div>
+  </div>
+</div>

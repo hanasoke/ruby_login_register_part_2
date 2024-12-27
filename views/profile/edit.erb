@@ -1,0 +1,60 @@
+<<div class="container">
+  <div class="row">
+    <div class="col my-4">Edit Profiles</div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <% if @errors&.any? %>
+        <% @errors.each do |error| %>
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <%= error %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <form action="/profiles/edit" method="post">
+        <div class="mb-3">
+          <label for="name" class="form-label">Name</label>
+          <input type="text" class="form-control" id="name" name="name" value="<%= @profile['name'] %>" />
+        </div>
+        <div class="mb-3">
+          <label for="username" class="form-label">Username</label>
+          <input type="text" class="form-control" id="username" name="username" value="<%= @profile['username'] %>" />
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input type="text" class="form-control" id="email" name="email" value="<%= @profile['email'] %>" />
+        </div>
+        <div class="mb-3 hidden">
+          <input type="hidden" class="form-control" id="password" name="password"   />
+        </div>
+        <div class="mb-3">
+          <input type="hidden" class="form-control" id="re_password" name="re_password" />
+        </div>
+
+        <div class="mb-3">
+          <label for="country" class="form-label">Country</label>
+          <select class="form-select" aria-label="Default select example" id="country" name="country">
+            <option selected value="<%= @profile['country'] %>"><%= @profile['country'] %></option>
+            <option value="japan">Japan</option>
+            <option value="taiwan">Taiwan</option>
+            <option value="malaysia">Malaysia</option>
+            <option value="thailand">Thailand</option>
+            <option value="vietnam">Vietnam</option>
+            <option value="indonesia">Indonesia</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary float-end">Update</button>
+      </form>
+      <a class="btn btn-light" href="/">Back</a>
+    </div>
+  </div>
+</div>
+
