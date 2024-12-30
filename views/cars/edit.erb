@@ -1,0 +1,70 @@
+<div class="container">
+  <div class="row">
+    <div class="col my-4">Adding A Car</div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <% if @errors.any? %>
+        <% @errors.each do |error| %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <div>
+            <%= error %>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <form action="/cars/<%= @car['id']%>" method="post">
+        <div class="mb-3">
+          <label for="name" class="form-label">Name</label>
+          <input type="text" class="form-control" id="name" name="name" value="<%= @car['name']%>" />
+        </div>
+        <div class="mb-3">
+          <label for="type" class="form-label">Type</label>
+          <input type="text" class="form-control" id="type" name="type" value="<%= @car['type']%>" />
+        </div>
+        <div class="mb-3">
+          <label for="brand" class="form-label">Brand</label>
+          <select class="form-select" aria-label="Selected Input" id="brand" name="brand">
+            <option selected value="<%= @car['brand'] %>"><%= @car['brand'] %></option>
+            <option value="bwd">BWD</option>
+            <option value="honda">Honda</option>
+            <option value="daihatsu">Daihatsu</option>
+            <option value="mitsubishi">Mitsubishi</option>
+            <option value="tesla">Tesla</option>
+            <option value="chevrolet">Chevrolet</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="chair" class="form-label">Chair</label>
+          <input class="form-select" type="number" id="chair" name="chair" value="<%= @car['chair']%>" />
+        </div>
+
+        <div class="mb-3">
+          <label for="country" class="form-label">Country</label>
+          <input class="form-control" type="text" id="country" name="country" value="<%= @car['country']%>" />
+        </div>
+
+        <div class="mb-3">
+          <label for="manufacture" class="form-label">Manufacture</label>
+          <input type="date" class="form-control" id="manufacture" name="manufacture" value="<%= @car['manufacture']%>"  >
+        </div>
+
+        <div class="mb-3">
+          <label for="price" class="form-label">Price</label>
+          <input type="number" class="form-control" id="price" name="price" value="<%= @car['price']%>" />
+        </div>
+
+        <button type="submit" class="btn btn-primary float-end">Update</button>
+      </form>
+      <a class="btn btn-light" href="/cars">Back</a>
+    </div>
+  </div>
+</div>

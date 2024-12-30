@@ -30,6 +30,27 @@ def validate_profile(name, username, email, password, re_password, country)
     errors
 end
 
+def validate_car(name, type, brand, chair, country, manufacture, price) 
+    errors = []
+    # check for empty fields
+    errors << "Name cannot be blank." if name.nil? || name.strip.empty?
+    errors << "type cannot be blank." if type.nil? || type.strip.empty?
+    errors << "brand cannot be blank." if brand.nil? || brand.strip.empty?
+    errors << "chair cannot be blank." if chair.nil? || chair.strip.empty?
+    errors << "country cannot be blank." if country.nil? || country.strip.empty?
+    errors << "manufacture cannot be blank." if manufacture.nil? || country.strip.empty?
+    errors << "price cannot be blank." if price.nil? || price.strip.empty?
+
+    # check for valid price
+    if price.nil? || price.strip.empty?
+        errors << "price cannot be blank."
+    elsif price.to_s !~ /\A\d+(\.\d{1,2})?\z/
+        errors << "Price must be a valid number."
+    end
+
+    errors
+end 
+
 def editing_profile(name, username, email, password, re_password, country, editing: false)
     errors = []
     errors << "Username cannot be blank." if username.nil? || username.strip.empty?
@@ -46,7 +67,6 @@ def editing_profile(name, username, email, password, re_password, country, editi
     errors.concat(validate_email(email))
     errors
 end
-
 
 def validate_profile_login(email, password)
     errors = []
@@ -148,7 +168,6 @@ post '/login' do
             @errors << "Invalid email or password"           
         end
     end
-    
     erb :login, layout: :'layouts/admin'
 end 
 
@@ -285,4 +304,53 @@ post '/reset_password' do
     @reset_token = reset_token
     erb :reset_password, layout: :'layouts/admin'
 end 
-        
+
+get '/cars' do 
+    @title = 'List of Cars'
+    @cars = DB.execute("SELECT * FROM cars")
+    erb :'cars/show', layout: :'layouts/main' 
+end 
+
+get '/add' do 
+    @title = 'Adding a car'
+    @errors = []
+    erb :'cars/add', layout: :'layouts/main'
+end 
+
+# Create a new car
+post '/add' do 
+    @errors = validate_car(params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price])
+
+    if @errors.empty?
+        DB.execute("INSERT INTO cars (name, type, brand, chair, country, manufacture, price) VALUES (?, ?, ?, ?, ?, ?, ?)", [params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price]])
+        redirect '/cars'
+    else 
+        erb :'cars/add', layout: :'layouts/main'
+    end 
+end 
+
+# Form to edit a item
+get '/cars/:id/edit' do 
+    @car = DB.execute("SELECT * FROM cars WHERE id = ?", [params[:id]]).first
+    @errors = []
+    erb :'cars/edit', layout: :'layouts/main'
+end 
+
+# Update a car
+post '/cars/:id' do 
+    @errors = validate_car(params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price])
+
+    if @errors.empty? 
+        DB.execute("UPDATE cars SET name = ?, type = ?, brand = ?, chair = ?, country = ?, manufacture = ?, price = ? WHERE id = ?", [params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture],  params[:price], params[:id]])
+        redirect '/cars'
+    else 
+        @car = { 'id' => params[:id], 'name' => params[:name], 'type' => params['type'], 'brand' => params[:brand], 'chair' => params[:chair], 'country' => params[:country], 'manufacture' => params[:manufacture], 'price' => params[:price]}
+        erb :'cars/edit'
+    end 
+end 
+
+# DELETE a item 
+post '/cars/:id/delete' do 
+    DB.execute("DELETE FROM cars WHERE id = ?", [params[:id]])
+    redirect '/cars'
+end 

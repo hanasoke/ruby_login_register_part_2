@@ -1,0 +1,55 @@
+<div class="container">
+  <div class="row">
+    <div class="col my-4 text-center">
+      <h1>Cars List</h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col mb-2">
+      <a href="/add" class="btn btn-success float-end">Add A Car</a>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <table class="table">
+        <thead>
+          <tr>
+            <td>ID</td>
+            <td>Name</td>
+            <td>Type</td>
+            <td>Brand</td>
+            <td>Chair</td>
+            <td>Country</td>
+            <td>Manufacture</td>
+            <td>Price</td>
+            <td>Action</td>
+          </tr>
+        </thead>
+        <tbody class="table-group-divider">
+          <% @cars.each do |car|%>
+          <tr>
+            <td><%= car['id']%></td>
+            <td><%= car['name']%></td>
+            <td><%= car['type']%></td>
+            <td><%= car['brand']%></td>
+            <td><%= car['chair']%></td>
+            <td><%= car['country']%></td>
+            <td><%= car['manufacture']%></td>
+            <td><%= car['price']%></td>
+            <td>
+              <div class="btn-group" role="group">
+                <a href="/cars/<%= car['id'] %>/edit" class="btn btn-info">Edit</a>
+                <form action="/cars/<%= car['id']%>/delete" method="POST">
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
