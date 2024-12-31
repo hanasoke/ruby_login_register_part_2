@@ -48,3 +48,10 @@ begin
 rescue SQLite3::SQLException => e 
     puts "Column 'chair' already exists or another error occured: #{e.message}"
 end 
+
+# Add the `photo` column if it doesn't exist
+begin 
+    DB.execute("ALTER TABLE cars ADD COLUMN photo TEXT;")
+rescue SQLite3::SQLException => e 
+    puts "Column 'photo' already exists or another error occured: #{e.message}"
+end 

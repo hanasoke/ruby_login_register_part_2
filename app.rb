@@ -321,8 +321,20 @@ end
 post '/add' do 
     @errors = validate_car(params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price])
 
+    photo = params['photo']
+    photo_filename = nil
+
     if @errors.empty?
-        DB.execute("INSERT INTO cars (name, type, brand, chair, country, manufacture, price) VALUES (?, ?, ?, ?, ?, ?, ?)", [params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price]])
+        # Handle file upload 
+        if photo && photo[:tempfile]
+            photo_filename = "#{Time.now.to_i}_#{photo[:filename]}"
+            File.open("./public/uploads/#{photo_filename}", 'wb') do |f|
+                f.write(photo[:tempfile].read)
+            end 
+        end 
+
+        # Insert car details, including the photo, into the database
+        DB.execute("INSERT INTO cars (name, type, brand, chair, country, manufacture, price, photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price], photo_filename])
         redirect '/cars'
     else 
         erb :'cars/add', layout: :'layouts/main'
@@ -340,11 +352,32 @@ end
 post '/cars/:id' do 
     @errors = validate_car(params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price])
 
+    photo = params['photo']
+    photo_filename = nil 
+
     if @errors.empty? 
-        DB.execute("UPDATE cars SET name = ?, type = ?, brand = ?, chair = ?, country = ?, manufacture = ?, price = ? WHERE id = ?", [params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture],  params[:price], params[:id]])
+        # Handle file upload
+        if photo && photo[:tempfile]
+            photo_filename = "#{Time.now.to_i}_#{photo[:filename]}"
+            File.open("./public/uploads/#{photo_filename}", 'wb') do |f|
+                f.write(photo[:tempfile].read)
+            end 
+        end 
+
+        DB.execute("UPDATE cars SET name = ?, type = ?, brand = ?, chair = ?, country = ?, manufacture = ?, price = ?, photo = COALESCE(?, photo) WHERE id = ?", [params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture],  params[:price], photo_filename, params[:id]])
         redirect '/cars'
     else 
-        @car = { 'id' => params[:id], 'name' => params[:name], 'type' => params['type'], 'brand' => params[:brand], 'chair' => params[:chair], 'country' => params[:country], 'manufacture' => params[:manufacture], 'price' => params[:price]}
+        @car = { 
+            'id' => params[:id], 
+            'name' => params[:name], 
+            'type' => params['type'], 
+            'brand' => params[:brand], 
+            'chair' => params[:chair], 
+            'country' => params[:country], 
+            'manufacture' => params[:manufacture], 
+            'price' => params[:price], 
+            'photo' => photo_filename || DB.execute("SELECT photo FROM cars WHERE id = ?", [params[:id]]).first['photo']
+        }
         erb :'cars/edit'
     end 
 end 

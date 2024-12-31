@@ -24,6 +24,7 @@
             <td>Country</td>
             <td>Manufacture</td>
             <td>Price</td>
+            <td>Photo</td>
             <td>Action</td>
           </tr>
         </thead>
@@ -38,6 +39,13 @@
             <td><%= car['country']%></td>
             <td><%= car['manufacture']%></td>
             <td><%= car['price']%></td>
+            <td>
+              <% if car['photo'] %>
+                <img src="/uploads/<%= car['photo'] %>" alt="<%= car['name'] %>" style="max-width: 300px;" />
+              <% else %>
+                <p>No Photo Available</p>
+              <% end %>
+            </td>
             <td>
               <div class="btn-group" role="group">
                 <a href="/cars/<%= car['id'] %>/edit" class="btn btn-info">Edit</a>

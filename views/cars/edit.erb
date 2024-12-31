@@ -5,22 +5,21 @@
 
   <div class="row">
     <div class="col">
-      <% if @errors.any? %>
-        <% @errors.each do |error| %>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-          <div>
-            <%= error %>
-          </div>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        <% end %>
-      <% end %>
+      <% if @errors.any? %> <% @errors.each do |error| %>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div><%= error %></div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <% end %> <% end %>
     </div>
   </div>
 
   <div class="row">
     <div class="col">
-      <form action="/cars/<%= @car['id']%>" method="post">
+      <form action="/cars/<%= @car['id']%>" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+          <input type="hidden" name="_method" value="ppst" />
+        </div>
         <div class="mb-3">
           <label for="name" class="form-label">Name</label>
           <input type="text" class="form-control" id="name" name="name" value="<%= @car['name']%>" />
@@ -54,12 +53,21 @@
 
         <div class="mb-3">
           <label for="manufacture" class="form-label">Manufacture</label>
-          <input type="date" class="form-control" id="manufacture" name="manufacture" value="<%= @car['manufacture']%>"  >
+          <input type="date" class="form-control" id="manufacture" name="manufacture" value="<%= @car['manufacture']%>" />
         </div>
 
         <div class="mb-3">
           <label for="price" class="form-label">Price</label>
           <input type="number" class="form-control" id="price" name="price" value="<%= @car['price']%>" />
+        </div>
+
+        <div class="mb-3">
+          <label for="photo" class="form-label">Place the Image</label>
+
+          <% if @car['photo'] %>
+            <img src="/uploads/<%= @car['photo'] %>" class="img-thumbnail" alt="<%= @car['name'] %>" style="max-width: 200px;">
+          <% end %>
+          <input class="form-control" type="file" id="photo" name="photo" />
         </div>
 
         <button type="submit" class="btn btn-primary float-end">Update</button>
