@@ -36,14 +36,25 @@ def validate_car(name, type, brand, chair, country, manufacture, price)
     errors << "Name cannot be blank." if name.nil? || name.strip.empty?
     errors << "type cannot be blank." if type.nil? || type.strip.empty?
     errors << "brand cannot be blank." if brand.nil? || brand.strip.empty?
-    errors << "chair cannot be blank." if chair.nil? || chair.strip.empty?
+
+    if chair.nil? || chair.to_i < 1 || chair.to_i > 10
+        errors << "Chair must be a number between 1 and 10."
+    end 
+
     errors << "country cannot be blank." if country.nil? || country.strip.empty?
-    errors << "manufacture cannot be blank." if manufacture.nil? || country.strip.empty?
-    errors << "price cannot be blank." if price.nil? || price.strip.empty?
+    
+    # Validate manufacture date
+    if manufacture.nil? || manufacture.strip.empty? || !manufacture.match(/^\d{4}-\d{2}-\d{2}$/)
+        errors << "Manufacture date must be a valid date (YYYY-MM-DD)."
+    end 
 
     # check for valid price
     if price.nil? || price.strip.empty?
         errors << "price cannot be blank."
+    
+    elsif price.nil? || price.to_i <= 0
+        errors << "Price must be a positive number"
+
     elsif price.to_s !~ /\A\d+(\.\d{1,2})?\z/
         errors << "Price must be a valid number."
     end
@@ -89,6 +100,28 @@ def validate_email(email)
         # check if email matches the regular expressionj
         errors << "Email format is invalid"
     end
+
+    errors
+end
+
+def validate_photo(photo) 
+    errors = []
+
+    if photo.nil? || photo[:tempfile].nil?
+        errors << "Photo is required."
+    else 
+        # Check file type
+        valid_types = ["image/jpeg", "image/png", "image/gif"]
+        unless valid_types.include?(photo[:type])
+            errors << "Photo must be a JPG, PNG, or GIF file."
+        end 
+
+        # Check file size (5MB max)
+        max_size = 5 * 1024 * 1024 # 5MB in bytes
+        if photo[:tempfile].size > max_size
+            errors << "Photo size must be less than 5MB."
+        end 
+    end 
 
     errors
 end
@@ -322,6 +355,8 @@ post '/add' do
     @errors = validate_car(params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price])
 
     photo = params['photo']
+    @errors += validate_photo(photo) # Add photo validation errors
+
     photo_filename = nil
 
     if @errors.empty?
@@ -350,37 +385,44 @@ end
 
 # Update a car
 post '/cars/:id' do 
-    @errors = validate_car(params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price])
+  @errors = validate_car(params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price])
 
-    photo = params['photo']
-    photo_filename = nil 
+  photo = params['photo']
+  @errors += validate_photo(photo) if photo && photo[:tempfile] # Validate only if a new photo is provided
 
-    if @errors.empty? 
-        # Handle file upload
-        if photo && photo[:tempfile]
-            photo_filename = "#{Time.now.to_i}_#{photo[:filename]}"
-            File.open("./public/uploads/#{photo_filename}", 'wb') do |f|
-                f.write(photo[:tempfile].read)
-            end 
-        end 
+  photo_filename = nil 
 
-        DB.execute("UPDATE cars SET name = ?, type = ?, brand = ?, chair = ?, country = ?, manufacture = ?, price = ?, photo = COALESCE(?, photo) WHERE id = ?", [params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture],  params[:price], photo_filename, params[:id]])
-        redirect '/cars'
-    else 
-        @car = { 
-            'id' => params[:id], 
-            'name' => params[:name], 
-            'type' => params['type'], 
-            'brand' => params[:brand], 
-            'chair' => params[:chair], 
-            'country' => params[:country], 
-            'manufacture' => params[:manufacture], 
-            'price' => params[:price], 
-            'photo' => photo_filename || DB.execute("SELECT photo FROM cars WHERE id = ?", [params[:id]]).first['photo']
-        }
-        erb :'cars/edit'
+  if @errors.empty? 
+    # Handle file upload
+    if photo && photo[:tempfile]
+      photo_filename = "#{Time.now.to_i}_#{photo[:filename]}"
+      File.open("./public/uploads/#{photo_filename}", 'wb') do |f|
+        f.write(photo[:tempfile].read)
+      end 
     end 
-end 
+
+    # Update the car in the database
+    DB.execute("UPDATE cars SET name = ?, type = ?, brand = ?, chair = ?, country = ?, manufacture = ?, price = ?, photo = COALESCE(?, photo) WHERE id = ?", 
+               [params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price], photo_filename, params[:id]])
+    redirect '/cars'
+  else 
+    # Handle validation errors and re-render the edit form
+    @car = { 
+      'id' => params[:id], 
+      'name' => params[:name], 
+      'type' => params[:type], 
+      'brand' => params[:brand], 
+      'chair' => params[:chair], 
+      'country' => params[:country], 
+      'manufacture' => params[:manufacture], 
+      'price' => params[:price], 
+      'photo' => photo_filename || DB.execute("SELECT photo FROM cars WHERE id = ?", [params[:id]]).first['photo']
+    }
+    erb :'cars/edit', layout: :'layouts/main'
+  end 
+end
+
+
 
 # DELETE a item 
 post '/cars/:id/delete' do 

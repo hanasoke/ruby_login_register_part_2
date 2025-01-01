@@ -1,6 +1,8 @@
 <div class="container">
   <div class="row">
-    <div class="col my-4">Adding A Car</div>
+    <div class="col my-4">
+      <h2>Edit Car</h2>
+    </div>
   </div>
 
   <div class="row">
@@ -16,21 +18,32 @@
 
   <div class="row">
     <div class="col">
-      <form action="/cars/<%= @car['id']%>" method="post" enctype="multipart/form-data">
+      <form action="/cars/<%= @car['id'] %>" method="post" enctype="multipart/form-data">
+        <!-- Hidden Method Field -->
         <div class="mb-3">
-          <input type="hidden" name="_method" value="ppst" />
+          <input type="hidden" name="_method" value="post" />
         </div>
+
+        <!-- Name Field -->
         <div class="mb-3">
           <label for="name" class="form-label">Name</label>
-          <input type="text" class="form-control" id="name" name="name" value="<%= @car['name']%>" />
+          <input type="text" class="form-control" id="name" name="name" value="<%= @car['name'] %>" />
         </div>
+
+        <!-- Type Field -->
         <div class="mb-3">
           <label for="type" class="form-label">Type</label>
-          <input type="text" class="form-control" id="type" name="type" value="<%= @car['type']%>" />
+          <select class="form-select" aria-label="Selected Input" name="type" id="type">
+            <option selected value="<%= @car['type'] %>"><%= @car['type'] %></option>
+            <option value="manual">Manual</option>
+            <option value="matic">Matic</option>
+          </select>
         </div>
+
+        <!-- Brand Dropdown -->
         <div class="mb-3">
           <label for="brand" class="form-label">Brand</label>
-          <select class="form-select" aria-label="Selected Input" id="brand" name="brand">
+          <select class="form-select" id="brand" name="brand">
             <option selected value="<%= @car['brand'] %>"><%= @car['brand'] %></option>
             <option value="bwd">BWD</option>
             <option value="honda">Honda</option>
@@ -41,35 +54,48 @@
           </select>
         </div>
 
+        <!-- Chair Field -->
         <div class="mb-3">
           <label for="chair" class="form-label">Chair</label>
-          <input class="form-select" type="number" id="chair" name="chair" value="<%= @car['chair']%>" />
+          <input class="form-control" type="number" id="chair" name="chair" value="<%= @car['chair'] %>" min="1" max="10" />
         </div>
 
+        <!-- Country Field -->
         <div class="mb-3">
           <label for="country" class="form-label">Country</label>
-          <input class="form-control" type="text" id="country" name="country" value="<%= @car['country']%>" />
+          <select class="form-select" aria-label="Selected Input" name="country" id="country">
+            <option selected value="<%= @car['country'] %>"><%= @car['country'] %></option>
+            <option value="germany">Germany</option>
+            <option value="japan">Japan</option>
+            <option value="china">China</option>
+            <option value="usa">USA</option>
+            <option value="south korea">South Korea</option>
+            <option value="mexico">Mexico</option>
+          </select>
         </div>
 
+        <!-- Manufacture Field -->
         <div class="mb-3">
           <label for="manufacture" class="form-label">Manufacture</label>
-          <input type="date" class="form-control" id="manufacture" name="manufacture" value="<%= @car['manufacture']%>" />
+          <input type="date" class="form-control" id="manufacture" name="manufacture" value="<%= @car['manufacture'] %>" />
         </div>
 
+        <!-- Price Field -->
         <div class="mb-3">
           <label for="price" class="form-label">Price</label>
-          <input type="number" class="form-control" id="price" name="price" value="<%= @car['price']%>" />
+          <input type="number" class="form-control" id="price" name="price" value="<%= @car['price'] %>" />
         </div>
 
+        <!-- Photo Upload -->
         <div class="mb-3">
           <label for="photo" class="form-label">Place the Image</label>
-
           <% if @car['photo'] %>
-            <img src="/uploads/<%= @car['photo'] %>" class="img-thumbnail" alt="<%= @car['name'] %>" style="max-width: 200px;">
+          <img src="/uploads/<%= @car['photo'] %>" class="img-thumbnail" alt="<%= @car['name'] %>" style="max-width: 200px" />
           <% end %>
           <input class="form-control" type="file" id="photo" name="photo" />
         </div>
 
+        <!-- Submit Button -->
         <button type="submit" class="btn btn-primary float-end">Update</button>
       </form>
       <a class="btn btn-light" href="/cars">Back</a>

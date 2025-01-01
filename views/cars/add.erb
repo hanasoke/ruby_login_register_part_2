@@ -5,16 +5,12 @@
 
   <div class="row">
     <div class="col">
-      <% if @errors.any? %>
-        <% @errors.each do |error| %>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-          <div>
-            <%= error %>
-          </div>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        <% end %>
-      <% end %>
+      <% if @errors.any? %> <% @errors.each do |error| %>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div><%= error %></div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <% end %> <% end %>
     </div>
   </div>
 
@@ -27,7 +23,11 @@
         </div>
         <div class="mb-3">
           <label for="type" class="form-label">Type</label>
-          <input type="text" class="form-control" id="type" name="type" value="<%= params[:type]%>" />
+          <select class="form-select" aria-label="Selected Input" id="type" name="type">
+            <option selected value="<%= params[:type] %>">Select the Type</option>
+            <option value="manual">Manual</option>
+            <option value="matic">Matic</option>
+          </select>
         </div>
         <div class="mb-3">
           <label for="brand" class="form-label">Brand</label>
@@ -44,17 +44,25 @@
 
         <div class="mb-3">
           <label for="chair" class="form-label">Chair</label>
-          <input class="form-select" type="number" id="chair" name="chair" value="<%= params[:chair]%>" />
+          <input class="form-select" type="number" id="chair" name="chair" value="<%= params[:chair]%>" min="1" max="10" />
         </div>
 
         <div class="mb-3">
           <label for="country" class="form-label">Country</label>
-          <input class="form-control" type="text" id="country" name="country" value="<%= params[:country]%>" />
+          <select class="form-select" aria-label="Selected Input" name="country" id="country">
+            <option selected value="<%= params[:country] %>">Select the Country</option>
+            <option value="germany">Germany</option>
+            <option value="japan">Japan</option>
+            <option value="china">China</option>
+            <option value="usa">USA</option>
+            <option value="south korea">South Korea</option>
+            <option value="mexico">Mexico</option>
+          </select>
         </div>
 
         <div class="mb-3">
           <label for="manufacture" class="form-label">Manufacture</label>
-          <input type="date" class="form-control" id="manufacture" name="manufacture" value="<%= params[:manufacture]%>" >
+          <input type="date" class="form-control" id="manufacture" name="manufacture" value="<%= params[:manufacture]%>" />
         </div>
         <div class="mb-3">
           <label for="price" class="form-label">Price</label>
@@ -62,7 +70,7 @@
         </div>
         <div class="mb-3">
           <label for="photo" class="form-label">The Image</label>
-          <input class="form-control" type="file" id="photo" name="photo">
+          <input class="form-control" type="file" id="photo" name="photo" />
         </div>
 
         <button type="submit" class="btn btn-primary float-end">Update</button>
