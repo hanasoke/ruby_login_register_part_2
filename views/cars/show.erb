@@ -38,7 +38,7 @@
             <td><%= car['chair']%></td>
             <td><%= car['country']%></td>
             <td><%= car['manufacture']%></td>
-            <td><%= car['price']%></td>
+            <td><%= format_rupiah(car['price']) %></td>
             <td>
               <% if car['photo'] %>
                 <img src="/uploads/<%= car['photo'] %>" alt="<%= car['name'] %>" style="max-width: 300px;" />

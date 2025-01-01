@@ -51,14 +51,15 @@ def validate_car(name, type, brand, chair, country, manufacture, price)
     # check for valid price
     if price.nil? || price.strip.empty?
         errors << "price cannot be blank."
-    
-    elsif price.nil? || price.to_i <= 0
-        errors << "Price must be a positive number"
 
     elsif price.to_s !~ /\A\d+(\.\d{1,2})?\z/
         errors << "Price must be a valid number."
-    end
+    
+    elsif price.to_f <= 0
+        errors << "Price must be a positive number"
 
+    end 
+    
     errors
 end 
 
@@ -122,8 +123,11 @@ def validate_photo(photo)
             errors << "Photo size must be less than 5MB."
         end 
     end 
-
     errors
+end
+
+def format_rupiah(number) 
+    "Rp #{number.to_i.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1.').reverse}"
 end
 
 # Routes 
