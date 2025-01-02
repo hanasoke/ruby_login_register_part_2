@@ -30,20 +30,19 @@ def validate_profile(name, username, email, password, re_password, country)
     errors
 end
 
-def validate_car(name, type, brand, chair, country, manufacture, price) 
+def validate_car(name, type, brand, chair, country, manufacture, price, id = nil) 
     errors = []
     # check for empty fields
     errors << "Name cannot be blank." if name.nil? || name.strip.empty?
 
-    # Validation logic
-    existing_car = DB.execute("SELECT id FROM cars WHERE LOWER(name) = ?", [name.downcase]).first
-    errors << "Name already exists. Please choose a different name." if existing_car
+    # Check for unique name 
+    query = id ? "SELECT id FROM cars WHERE LOWER(name) = ? AND id != ?" : "SELECT id FROM cars WHERE LOWER(name) = ?"
+    existing_car = DB.execute(query, id ? [name.downcase, id] : [name.downcase]).first
+    errors << "Name already exist. Plase choose a different name." if existing_car
 
-
+    # Other Validation
     errors << "type cannot be blank." if type.nil? || type.strip.empty?
     errors << "brand cannot be blank." if brand.nil? || brand.strip.empty?
-
-
 
     if chair.nil? || chair.to_i < 1 || chair.to_i > 10
         errors << "Chair must be a number between 1 and 10."
@@ -282,7 +281,7 @@ end
 # Show Forgot Password Page
 get '/forgot_password' do 
     @errors = []
-    erb :forgot_password, layout: :'layouts/main'
+    erb :'profile/forgot_password', layout: :'layouts/admin'
 end 
 
 # Handle Forgot Password Submission
@@ -319,7 +318,7 @@ get '/reset_password/:token' do
         redirect '/login'
     end 
 
-    erb :reset_password, layout: :'layouts/admin'
+    erb :'profile/reset_password', layout: :'layouts/admin'
 end 
 
 # Handle Reset Password Submission
@@ -347,7 +346,7 @@ post '/reset_password' do
     end 
 
     @reset_token = reset_token
-    erb :reset_password, layout: :'layouts/admin'
+    erb :'profile/reset_password', layout: :'layouts/admin'
 end 
 
 get '/cars' do 
@@ -397,7 +396,7 @@ end
 
 # Update a car
 post '/cars/:id' do 
-  @errors = validate_car(params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price])
+  @errors = validate_car(params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price], params[:id])
 
   photo = params['photo']
   @errors += validate_photo(photo) if photo && photo[:tempfile] # Validate only if a new photo is provided
@@ -419,16 +418,19 @@ post '/cars/:id' do
     redirect '/cars'
   else 
     # Handle validation errors and re-render the edit form
+    original_car = DB.execute("SELECT * FROM cars WHERE id = ?", [params[:id]]).first
+
+    # Merge user input with original data to retain user edits 
     @car = { 
       'id' => params[:id], 
-      'name' => params[:name], 
-      'type' => params[:type], 
-      'brand' => params[:brand], 
-      'chair' => params[:chair], 
-      'country' => params[:country], 
-      'manufacture' => params[:manufacture], 
-      'price' => params[:price], 
-      'photo' => photo_filename || DB.execute("SELECT photo FROM cars WHERE id = ?", [params[:id]]).first['photo']
+      'name' => params[:name] || original_car['name'],
+      'type' => params[:type] || original_car['type'],
+      'brand' => params[:brand] || original_car['brand'],
+      'chair' => params[:chair] || original_car['chair'], 
+      'country' => params[:country] || original_car['country'],
+      'manufacture' => params[:manufacture] || original_car['manufacture'],
+      'price' => params[:price] || original_car['price'],
+      'photo' => photo_filename || original_car['photo'],
     }
     erb :'cars/edit', layout: :'layouts/main'
   end 
