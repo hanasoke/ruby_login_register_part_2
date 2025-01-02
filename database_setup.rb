@@ -55,3 +55,22 @@ SQL
 # rescue SQLite3::SQLException => e 
 #     puts "Column 'photo' already exists or another error occured: #{e.message}"
 # end 
+
+DB.execute <<-SQL 
+    CREATE TABLE IF NOT EXISTS motors (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        type TEXT,
+        brand TEXT,
+        chair TEXT,
+        country TEXT,
+        manufacture TEXT,
+        price TEXT
+    );
+SQL
+
+# begin 
+#     DB.execute("ALTER TABLE motors ADD COLUMN guarance TEXT;")
+# rescue SQLite3::SQLException => e 
+#     puts "Column 'guarance' already exists or another error occured: #{e.message}"
+# end 
