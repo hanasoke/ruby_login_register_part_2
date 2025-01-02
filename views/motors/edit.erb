@@ -8,20 +8,20 @@
   <div class="row">
     <div class="col">
       <% if @errors.any? %> 
-        <% @errors.each do |error| %>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-          <div><%= error %></div>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        <% end %> 
+      <% @errors.each do |error| %>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div><%= error %></div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <% end %> 
       <% end %>
     </div>
   </div>
 
-  <div class="row">
+  <div class="row mb-5">
     <div class="col">
-      <form action="/cars/<%= @car['id'] %>" method="post" enctype="multipart/form-data">
-        <!-- Hidden Method Field -->
+      <form action="/motors/<%= @motor['id'] %>" method="post" enctype="multipart/form-data">
+        <!-- Hidden Method -->
         <div class="mb-3">
           <input type="hidden" name="_method" value="post" />
         </div>
@@ -29,16 +29,19 @@
         <!-- Name Field -->
         <div class="mb-3">
           <label for="name" class="form-label">Name</label>
-          <input type="text" class="form-control" id="name" name="name" value="<%= @car['name'] %>" />
+          <input type="text" class="form-control" id="name" name="name" value="<%= @motor['name'] %>" />
         </div>
 
         <!-- Type Field -->
         <div class="mb-3">
           <label for="type" class="form-label">Type</label>
           <select class="form-select" aria-label="Selected Input" name="type" id="type">
-            <option selected value="<%= @car['type'] %>"><%= @car['type'] %></option>
-            <option value="Manual">Manual</option>
+            <option selected value="<%= @motor['type'] %>"><%= @motor['type'] %></option>
             <option value="Matic">Matic</option>
+            <option value="Sport">Sport</option>
+            <option value="Cub">Cub</option>
+            <option value="EV">EV</option>
+            <option value="BigBike">BigBike</option>
           </select>
         </div>
 
@@ -46,53 +49,51 @@
         <div class="mb-3">
           <label for="brand" class="form-label">Brand</label>
           <select class="form-select" id="brand" name="brand">
-            <option selected value="<%= @car['brand'] %>"><%= @car['brand'] %></option>
-            <option value="BWD">BWD</option>
+            <option selected value="<%= @motor['brand'] %>"><%= @motor['brand'] %></option>
+            <option value="Suzuki">Suzuki</option>
             <option value="Honda">Honda</option>
-            <option value="Daihatsu">Daihatsu</option>
-            <option value="Mitsubishi">Mitsubishi</option>
-            <option value="Tesla">Tesla</option>
-            <option value="Chevrolet">Chevrolet</option>
+            <option value="Yamaha">Yamaha</option>
+            <option value="Harley Davidson">Harley Davidson</option>
+            <option value="Kawasaki">Kawasaki</option>
           </select>
         </div>
 
         <!-- Chair Field -->
         <div class="mb-3">
           <label for="chair" class="form-label">Chair</label>
-          <input class="form-control" type="number" id="chair" name="chair" value="<%= @car['chair'] %>" />
+          <input class="form-control" type="number" id="chair" name="chair" value="<%= @motor['chair'] %>" />
         </div>
 
         <!-- Country Field -->
         <div class="mb-3">
           <label for="country" class="form-label">Country</label>
           <select class="form-select" aria-label="Selected Input" name="country" id="country">
-            <option selected value="<%= @car['country'] %>"><%= @car['country'] %></option>
+            <option selected value="<%= @motor['country'] %>"><%= @motor['country'] %></option>
             <option value="Germany">Germany</option>
             <option value="Japan">Japan</option>
             <option value="China">China</option>
-            <option value="USA">USA</option>
+            <option value="Taiwan">Taiwan</option>
             <option value="South Korea">South Korea</option>
-            <option value="Mexico">Mexico</option>
           </select>
         </div>
 
         <!-- Manufacture Field -->
         <div class="mb-3">
           <label for="manufacture" class="form-label">Manufacture</label>
-          <input type="date" class="form-control" id="manufacture" name="manufacture" value="<%= @car['manufacture'] %>" />
+          <input type="date" class="form-control" id="manufacture" name="manufacture" value="<%= @motor['manufacture'] %>" />
         </div>
 
         <!-- Price Field -->
         <div class="mb-3">
           <label for="price" class="form-label">Price</label>
-          <input type="number" class="form-control" id="price" name="price" value="<%= @car['price'] %>" />
+          <input type="number" class="form-control" id="price" name="price" value="<%= @motor['price'] %>" />
         </div>
 
         <!-- Photo Upload -->
         <div class="mb-3">
           <label for="photo" class="form-label">Place the Image</label>
-          <% if @car['photo'] %>
-          <img src="/uploads/<%= @car['photo'] %>" class="img-thumbnail" alt="<%= @car['name'] %>" style="max-width: 200px" />
+          <% if @motor['photo'] %>
+          <img src="/uploads/<%= @motor['photo'] %>" class="img-thumbnail" alt="<%= @motor['name'] %>" style="max-width: 200px" />
           <% end %>
           <input class="form-control" type="file" id="photo" name="photo" />
         </div>
@@ -100,7 +101,7 @@
         <!-- Submit Button -->
         <button type="submit" class="btn btn-primary float-end">Update</button>
       </form>
-      <a class="btn btn-light" href="/cars">Back</a>
+      <a class="btn btn-light" href="/motors">Back</a>
     </div>
   </div>
 </div>

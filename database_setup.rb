@@ -70,7 +70,7 @@ DB.execute <<-SQL
 SQL
 
 # begin 
-#     DB.execute("ALTER TABLE motors ADD COLUMN guarance TEXT;")
+#     DB.execute("ALTER TABLE motors ADD COLUMN photo TEXT;")
 # rescue SQLite3::SQLException => e 
-#     puts "Column 'guarance' already exists or another error occured: #{e.message}"
+#     puts "Column 'photo' already exists or another error occured: #{e.message}"
 # end 

@@ -68,7 +68,47 @@ def validate_car(name, type, brand, chair, country, manufacture, price, id = nil
     end 
     
     errors
-end 
+end
+
+def validate_motor(name, type, brand, chair, country, manufacture, price, id = nil) 
+    errors = []
+    # check for empty fields
+    errors << "Name cannot be blank." if name.nil? || name.strip.empty?
+
+    # Check for unique name 
+    query = id ? "SELECT id FROM motors WHERE LOWER(name) = ? AND id != ?" : "SELECT id FROM motors WHERE LOWER(name) = ?"
+    existing_motor = DB.execute(query, id ? [name.downcase, id] : [name.downcase]).first
+    errors << "Name already exist. Plase choose a different name." if existing_motor
+
+    # Other Validation
+    errors << "type cannot be blank." if type.nil? || type.strip.empty?
+    errors << "brand cannot be blank." if brand.nil? || brand.strip.empty?
+
+    if chair.nil? || chair.to_i < 1 || chair.to_i > 10
+        errors << "Chair must be a number between 1 and 10."
+    end 
+
+    errors << "country cannot be blank." if country.nil? || country.strip.empty?
+    
+    # Validate manufacture date
+    if manufacture.nil? || manufacture.strip.empty? || !manufacture.match(/^\d{4}-\d{2}-\d{2}$/)
+        errors << "Manufacture date must be a valid date (YYYY-MM-DD)."
+    end 
+
+    # check for valid price
+    if price.nil? || price.strip.empty?
+        errors << "price cannot be blank."
+
+    elsif price.to_s !~ /\A\d+(\.\d{1,2})?\z/
+        errors << "Price must be a valid number."
+    
+    elsif price.to_f <= 0
+        errors << "Price must be a positive number"
+
+    end 
+    
+    errors
+end
 
 def editing_profile(name, username, email, password, re_password, country, editing: false)
     errors = []
@@ -390,8 +430,9 @@ post '/add' do
     end 
 end 
 
-# Form to edit a item
+# Form to edit a car
 get '/cars/:id/edit' do 
+    @title = "Edit A Car"
     @car = DB.execute("SELECT * FROM cars WHERE id = ?", [params[:id]]).first
     @errors = []
     erb :'cars/edit', layout: :'layouts/main'
@@ -439,10 +480,99 @@ post '/cars/:id' do
   end 
 end
 
-
-
 # DELETE a item 
 post '/cars/:id/delete' do 
     DB.execute("DELETE FROM cars WHERE id = ?", [params[:id]])
     redirect '/cars'
+end
+
+get'/motors' do 
+    @title = "List of Motorcycle"
+    @motors = DB.execute("SELECT * FROM motors")
+    erb :'motors/index', layout: :'layouts/main'
 end 
+
+get '/adding' do 
+    @title = 'Adding a motor'
+    @errors = []
+    erb :'motors/add', layout: :'layouts/main'
+end 
+
+# Create a new motorcycle 
+post '/adding' do 
+    @errors = validate_motor(params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price])
+
+    # photo validation 
+    photo = params['photo']
+    @errors += validate_photo(photo) # Add photo validation errors
+
+    photo_filename = nil 
+
+    if @errors.empty?
+        # Handle file upload
+        if photo && photo[:tempfile]
+            photo_filename = "#{Time.now.to_i}_#{photo[:filename]}"
+            File.open("./public/uploads/#{photo_filename}", 'wb') do |f|
+                f.write(photo[:tempfile].read)
+            end 
+        end
+
+        # Insert motor details, including the photo, into the database
+        DB.execute("INSERT INTO motors (name, type, brand, chair, country, manufacture, price, photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price], photo_filename])
+
+        redirect '/motors'
+
+    else
+        erb :'motors/add', layout: :'layouts/main'
+    end 
+end  
+
+# Form to edit a motor
+get '/motors/:id/edit' do 
+    @title = "Edit A Motor"
+    @motor = DB.execute("SELECT * FROM motors WHERE id = ?", [params[:id]]).first
+    @errors = []
+    erb :'motors/edit', layout: :'layouts/main'
+end 
+
+# Update a motor
+post '/motors/:id' do 
+    @errors = validate_motor(params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price], params[:id])
+
+  photo = params['photo']
+  @errors += validate_photo(photo) if photo && photo[:tempfile] # Validate only if a new photo is provided
+
+  photo_filename = nil 
+
+  if @errors.empty? 
+    # Handle file upload
+    if photo && photo[:tempfile]
+      photo_filename = "#{Time.now.to_i}_#{photo[:filename]}"
+      File.open("./public/uploads/#{photo_filename}", 'wb') do |f|
+        f.write(photo[:tempfile].read)
+      end 
+    end 
+
+    # Update the car in the database
+    DB.execute("UPDATE motors SET name = ?, type = ?, brand = ?, chair = ?, country = ?, manufacture = ?, price = ?, photo = COALESCE(?, photo) WHERE id = ?", 
+               [params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price], photo_filename, params[:id]])
+    redirect '/motors'
+  else 
+    # Handle validation errors and re-render the edit form
+    original_motor = DB.execute("SELECT * FROM motors WHERE id = ?", [params[:id]]).first
+
+    # Merge user input with original data to retain user edits 
+    @motor = { 
+      'id' => params[:id], 
+      'name' => params[:name] || original_motor['name'],
+      'type' => params[:type] || original_motor['type'],
+      'brand' => params[:brand] || original_motor['brand'],
+      'chair' => params[:chair] || original_motor['chair'], 
+      'country' => params[:country] || original_motor['country'],
+      'manufacture' => params[:manufacture] || original_motor['manufacture'],
+      'price' => params[:price] || original_motor['price'],
+      'photo' => photo_filename || original_motor['photo'],
+    }
+    erb :'motors/edit', layout: :'layouts/main'
+  end 
+end

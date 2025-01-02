@@ -1,0 +1,64 @@
+<div class="container">
+  <div class="row">
+    <div class="col my-4 text-center">
+      <h1>Motorcycle List</h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col mb-2">
+      <a href="/adding" class="btn btn-success float-end">Add A Motor</a>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <table class="table">
+        <thead>
+          <tr>
+            <td>ID</td>
+            <td>Name</td>
+            <td>Type</td>
+            <td>Brand</td>
+            <td>Chair</td>
+            <td>Country</td>
+            <td>Manufacture</td>
+            <td>Price</td>
+            <td>Photo</td>
+            <td>Guarance</td>
+            <td>Action</td>
+          </tr>
+        </thead>
+        <tbody class="table-group-divider">
+          <% @motors.each do |motor|%>
+          <tr>
+            <td><%= motor['id']%></td>
+            <td><%= motor['name']%></td>
+            <td><%= motor['type']%></td>
+            <td><%= motor['brand']%></td>
+            <td><%= motor['chair']%></td>
+            <td><%= motor['country']%></td>
+            <td><%= motor['manufacture']%></td>
+            <td><%= format_rupiah(motor['price']) %></td>
+            <td>
+              <% if motor['photo'] %>
+              <img src="/uploads/<%= motor['photo'] %>" alt="<%= motor['name'] %>" style="max-width: 300px" />
+              <% else %>
+              <p>No Photo Available</p>
+              <% end %>
+            </td>
+            <td>
+              <div class="btn-group" role="group">
+                <a href="/motors/<%= motor['id'] %>/edit" class="btn btn-info">Edit</a>
+                <form action="/motors/<%= motor['id']%>/delete" method="POST">
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
