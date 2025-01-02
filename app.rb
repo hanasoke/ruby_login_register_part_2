@@ -34,8 +34,16 @@ def validate_car(name, type, brand, chair, country, manufacture, price)
     errors = []
     # check for empty fields
     errors << "Name cannot be blank." if name.nil? || name.strip.empty?
+
+    # Validation logic
+    existing_car = DB.execute("SELECT id FROM cars WHERE LOWER(name) = ?", [name.downcase]).first
+    errors << "Name already exists. Please choose a different name." if existing_car
+
+
     errors << "type cannot be blank." if type.nil? || type.strip.empty?
     errors << "brand cannot be blank." if brand.nil? || brand.strip.empty?
+
+
 
     if chair.nil? || chair.to_i < 1 || chair.to_i > 10
         errors << "Chair must be a number between 1 and 10."
