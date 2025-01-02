@@ -125,9 +125,9 @@ def validate_photo(photo)
         end 
 
         # Check file size (5MB max)
-        max_size = 5 * 1024 * 1024 # 5MB in bytes
+        max_size = 4 * 1024 * 1024 # 5MB in bytes
         if photo[:tempfile].size > max_size
-            errors << "Photo size must be less than 5MB."
+            errors << "Photo size must be less than 4MB."
         end 
     end 
     errors
