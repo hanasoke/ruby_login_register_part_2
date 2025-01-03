@@ -527,6 +527,9 @@ end
 
 # Create a new motorcycle 
 post '/adding' do 
+    # Flash message
+    session[:success] = "Motor has been successfully added."
+
     @errors = validate_motor(params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price])
 
     # photo validation 
@@ -576,6 +579,10 @@ end
 
 # Update a motor
 post '/motors/:id' do 
+
+    # Flash message
+    session[:success] = "Motor has been successfully updated."
+
     @errors = validate_motor(params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price], params[:id])
 
     # photo
@@ -633,6 +640,10 @@ end
 
 # Delete a motor
 post '/motors/:id/delete' do 
+    # Delete logic
     DB.execute("DELETE FROM motors WHERE id = ?", [params[:id]])
+
+    # Flash message
+    session[:success] = "Motor has been successfully deleted."
     redirect '/motors'
 end 
