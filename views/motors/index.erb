@@ -25,7 +25,7 @@
             <td>Manufacture</td>
             <td>Price</td>
             <td>Photo</td>
-            <td>Guarance</td>
+            <td>Warranty</td>
             <td>Action</td>
           </tr>
         </thead>
@@ -42,11 +42,12 @@
             <td><%= format_rupiah(motor['price']) %></td>
             <td>
               <% if motor['photo'] %>
-              <img src="/uploads/<%= motor['photo'] %>" alt="<%= motor['name'] %>" style="max-width: 300px" />
+                <img src="/uploads/<%= motor['photo'] %>" alt="<%= motor['name'] %>" style="max-width: 300px" />
               <% else %>
-              <p>No Photo Available</p>
+                <p>No Photo Available</p>
               <% end %>
             </td>
+            <td><%= motor['warranty']%></td>
             <td>
               <div class="btn-group" role="group">
                 <a href="/motors/<%= motor['id'] %>/edit" class="btn btn-info">Edit</a>

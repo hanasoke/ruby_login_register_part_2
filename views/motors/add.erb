@@ -62,7 +62,6 @@
             <option value="South Korea">South Korea</option>
           </select>
         </div>
-
         <div class="mb-3">
           <label for="manufacture" class="form-label">Manufacture</label>
           <input type="date" class="form-control" id="manufacture" name="manufacture" value="<%= params[:manufacture]%>" />
@@ -74,6 +73,11 @@
         <div class="mb-3">
           <label for="photo" class="form-label">The Image</label>
           <input class="form-control" type="file" id="photo" name="photo" />
+        </div>
+
+        <div class="mb-3">
+          <label for="warranty" class="form-label">Warranty</label>
+          <input class="form-control" type="file" id="warranty" name="warranty" />
         </div>
 
         <button type="submit" class="btn btn-primary float-end">Update</button>

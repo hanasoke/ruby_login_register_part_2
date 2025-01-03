@@ -84,8 +84,8 @@ def validate_motor(name, type, brand, chair, country, manufacture, price, id = n
     errors << "type cannot be blank." if type.nil? || type.strip.empty?
     errors << "brand cannot be blank." if brand.nil? || brand.strip.empty?
 
-    if chair.nil? || chair.to_i < 1 || chair.to_i > 10
-        errors << "Chair must be a number between 1 and 10."
+    if chair.nil? || chair.to_i < 1 || chair.to_i > 3
+        errors << "Chair must be a number between 1 and 3"
     end 
 
     errors << "country cannot be blank." if country.nil? || country.strip.empty?
@@ -175,6 +175,33 @@ def validate_photo(photo)
     end 
     errors
 end
+
+def validate_file(file)
+    errors = []
+
+    if file.nil? || file[:tempfile].nil?
+        errors << "File is required."
+    else 
+        # Check file type
+        valid_types = ["application/pdf",
+                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                        "text/plain"]
+        unless valid_types.include?(file[:type])
+            errors << "File must be a PDF, DOCX, or TXT file."
+        end
+
+        # Check file size (10MB max, 1KB min)
+        max_size = 10 * 1024 * 1024 # 10MB in bytes
+        min_size = 1 * 1024         # 1KB in bytes
+        if file[:tempfile].size > max_size
+            errors << "File size must be less than 10MB."
+        elsif file[:tempfile].size < min_size
+            errors << "File size must be greater than 1KB."
+        end        
+    end
+    errors
+end
+    
 
 def format_rupiah(number) 
     "Rp #{number.to_i.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1.').reverse}"
@@ -506,10 +533,14 @@ post '/adding' do
     photo = params['photo']
     @errors += validate_photo(photo) # Add photo validation errors
 
-    photo_filename = nil 
+    # file validation
+    file = params['warranty']
+    @errors += validate_file(file) # Add Warranty validation errors
 
+    photo_filename = nil 
     if @errors.empty?
-        # Handle file upload
+
+        # Handle file photo upload
         if photo && photo[:tempfile]
             photo_filename = "#{Time.now.to_i}_#{photo[:filename]}"
             File.open("./public/uploads/#{photo_filename}", 'wb') do |f|
@@ -517,11 +548,18 @@ post '/adding' do
             end 
         end
 
+        # Handle file document upload
+        if file && file[:tempfile]
+            fileextension = "#{Time.now.to_i}_#{file[:filename]}"
+            File.open("./public/uploads/files/#{fileextension}", "wb") do |f|
+                f.write(file[:tempfile].read)
+            end 
+        end 
+
         # Insert motor details, including the photo, into the database
-        DB.execute("INSERT INTO motors (name, type, brand, chair, country, manufacture, price, photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price], photo_filename])
-
+        DB.execute("INSERT INTO motors (name, type, brand, chair, country, manufacture, price, photo, warranty) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price], photo_filename, fileextension])
+        
         redirect '/motors'
-
     else
         erb :'motors/add', layout: :'layouts/main'
     end 
@@ -577,7 +615,7 @@ post '/motors/:id' do
   end 
 end
 
-# Delete a item
+# Delete a motor
 post '/motors/:id/delete' do 
     DB.execute("DELETE FROM motors WHERE id = ?", [params[:id]])
     redirect '/motors'

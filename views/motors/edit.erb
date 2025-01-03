@@ -7,14 +7,12 @@
 
   <div class="row">
     <div class="col">
-      <% if @errors.any? %> 
-      <% @errors.each do |error| %>
+      <% if @errors.any? %> <% @errors.each do |error| %>
       <div class="alert alert-danger alert-dismissible fade show" role="alert">
         <div><%= error %></div>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
-      <% end %> 
-      <% end %>
+      <% end %> <% end %>
     </div>
   </div>
 
@@ -91,11 +89,24 @@
 
         <!-- Photo Upload -->
         <div class="my-3">
-          <label for="photo" class="form-label">Place the Image</label>
+          <label for="photo" class="form-label">Image</label>
           <% if @motor['photo'] %>
           <img src="/uploads/<%= @motor['photo'] %>" class="img-thumbnail mb-3" alt="<%= @motor['name'] %>" style="max-width: 200px" />
           <% end %>
           <input class="form-control" type="file" id="photo" name="photo" />
+        </div>
+
+        <!-- File Upload -->
+        <div class="my-3">
+          <label for="warranty" class="form-label">Warranty</label>
+          <% if @motor['warranty'] %>
+            <div class="mb-3">
+              <a href="/uploads/files/<%= @motor['warranty']%>" target="_blank">
+                Download Warranty File 
+              </a>
+            </div>
+          <% end %>
+          <input class="form-control" type="file" id="warranty" name="warranty" />
         </div>
 
         <!-- Submit Button -->
