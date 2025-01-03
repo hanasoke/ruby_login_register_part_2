@@ -19,7 +19,8 @@
           <div> <%= session[:success] %> </div>
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-        <% session[:success] = nil %> <!-- Clear the flash message -->
+        <!-- Clear the flash message -->
+        <% session[:success] = nil %>
       <% end %>
     </div>
   </div>

@@ -433,6 +433,8 @@ end
 
 # Create a new car
 post '/add' do 
+    # Flash message
+    session[:success] = "The Car has been successfully added."
     @errors = validate_car(params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price])
 
     photo = params['photo']
@@ -467,8 +469,13 @@ end
 
 # Update a car
 post '/cars/:id' do 
+  # Flash message
+  session[:success] = "Car has been successfully updated."
+
+  # error variable check   
   @errors = validate_car(params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price], params[:id])
 
+#   error photo variable check 
   photo = params['photo']
   @errors += validate_photo(photo) if photo && photo[:tempfile] # Validate only if a new photo is provided
 
@@ -507,8 +514,11 @@ post '/cars/:id' do
   end 
 end
 
-# DELETE a item 
-post '/cars/:id/delete' do 
+# DELETE a car 
+post '/cars/:id/delete' do
+    # Flash message
+    session[:success] = "Car has been successfully deleted."
+
     DB.execute("DELETE FROM cars WHERE id = ?", [params[:id]])
     redirect '/cars'
 end
