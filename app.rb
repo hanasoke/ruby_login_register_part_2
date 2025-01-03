@@ -576,3 +576,9 @@ post '/motors/:id' do
     erb :'motors/edit', layout: :'layouts/main'
   end 
 end
+
+# Delete a item
+post '/motors/:id/delete' do 
+    DB.execute("DELETE FROM motors WHERE id = ?", [params[:id]])
+    redirect '/motors'
+end 

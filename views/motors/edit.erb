@@ -90,10 +90,10 @@
         </div>
 
         <!-- Photo Upload -->
-        <div class="mb-3">
+        <div class="my-3">
           <label for="photo" class="form-label">Place the Image</label>
           <% if @motor['photo'] %>
-          <img src="/uploads/<%= @motor['photo'] %>" class="img-thumbnail" alt="<%= @motor['name'] %>" style="max-width: 200px" />
+          <img src="/uploads/<%= @motor['photo'] %>" class="img-thumbnail mb-3" alt="<%= @motor['name'] %>" style="max-width: 200px" />
           <% end %>
           <input class="form-control" type="file" id="photo" name="photo" />
         </div>
