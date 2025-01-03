@@ -532,12 +532,13 @@ post '/adding' do
     # photo validation 
     photo = params['photo']
     @errors += validate_photo(photo) # Add photo validation errors
+    photo_filename = nil
 
     # file validation
     file = params['warranty']
     @errors += validate_file(file) # Add Warranty validation errors
+    file_filename = nil 
 
-    photo_filename = nil 
     if @errors.empty?
 
         # Handle file photo upload
@@ -548,16 +549,16 @@ post '/adding' do
             end 
         end
 
-        # Handle file document upload
+        # Handle warranty file upload
         if file && file[:tempfile]
-            fileextension = "#{Time.now.to_i}_#{file[:filename]}"
-            File.open("./public/uploads/files/#{fileextension}", "wb") do |f|
+            file_filename = "#{Time.now.to_i}_#{file[:filename]}"
+            File.open("./public/uploads/files/#{file_filename}", "wb") do |f|
                 f.write(file[:tempfile].read)
             end 
         end 
 
         # Insert motor details, including the photo, into the database
-        DB.execute("INSERT INTO motors (name, type, brand, chair, country, manufacture, price, photo, warranty) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price], photo_filename, fileextension])
+        DB.execute("INSERT INTO motors (name, type, brand, chair, country, manufacture, price, photo, warranty) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price], photo_filename, file_filename])
         
         redirect '/motors'
     else
@@ -577,13 +578,19 @@ end
 post '/motors/:id' do 
     @errors = validate_motor(params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price], params[:id])
 
-  photo = params['photo']
-  @errors += validate_photo(photo) if photo && photo[:tempfile] # Validate only if a new photo is provided
+    # photo
+    photo = params['photo']
+    @errors += validate_photo(photo) if photo && photo[:tempfile] # Validate only if a new photo is provided
+    photo_filename = nil 
 
-  photo_filename = nil 
+    # file
+    file = params['warranty']
+    @errors += validate_file(file) if file && file[:tempfile] #validate only if a new file is provided
+    file_filename = nil 
+
 
   if @errors.empty? 
-    # Handle file upload
+    # Handle file image upload
     if photo && photo[:tempfile]
       photo_filename = "#{Time.now.to_i}_#{photo[:filename]}"
       File.open("./public/uploads/#{photo_filename}", 'wb') do |f|
@@ -591,9 +598,17 @@ post '/motors/:id' do
       end 
     end 
 
+    # Handle file warranty upload
+    if file && file[:tempfile]
+        file_filename = "#{Time.now.to_i}_#{file[:filename]}"
+        File.open("./public/uploads/files/#{file_filename}", 'wb') do |f|
+            f.write(file[:tempfile].read)
+        end
+    end  
+
     # Update the car in the database
-    DB.execute("UPDATE motors SET name = ?, type = ?, brand = ?, chair = ?, country = ?, manufacture = ?, price = ?, photo = COALESCE(?, photo) WHERE id = ?", 
-               [params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price], photo_filename, params[:id]])
+    DB.execute("UPDATE motors SET name = ?, type = ?, brand = ?, chair = ?, country = ?, manufacture = ?, price = ?, photo = COALESCE(?, photo), warranty = COALESCE(?, warranty) WHERE id = ?", 
+               [params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price], photo_filename, file_filename,params[:id]])
     redirect '/motors'
   else 
     # Handle validation errors and re-render the edit form
@@ -610,6 +625,7 @@ post '/motors/:id' do
       'manufacture' => params[:manufacture] || original_motor['manufacture'],
       'price' => params[:price] || original_motor['price'],
       'photo' => photo_filename || original_motor['photo'],
+      'warranty' => file_filename || original_motor['warranty']
     }
     erb :'motors/edit', layout: :'layouts/main'
   end 
