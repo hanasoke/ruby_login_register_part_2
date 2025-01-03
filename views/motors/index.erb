@@ -42,18 +42,36 @@
             <td><%= format_rupiah(motor['price']) %></td>
             <td>
               <% if motor['photo'] %>
-                <img src="/uploads/<%= motor['photo'] %>" alt="<%= motor['name'] %>" style="max-width: 300px" />
+              <img src="/uploads/<%= motor['photo'] %>" alt="<%= motor['name'] %>" style="max-width: 300px" />
               <% else %>
-                <p>No Photo Available</p>
+              <p>No Photo Available</p>
               <% end %>
             </td>
             <td><%= motor['warranty']%></td>
             <td>
               <div class="btn-group" role="group">
                 <a href="/motors/<%= motor['id'] %>/edit" class="btn btn-info">Edit</a>
-                <form action="/motors/<%= motor['id']%>/delete" method="POST">
-                  <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
+
+                <!-- Delete Button triggers the modal -->
+                <button type="submit" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal<%= motor['id']%>">Delete</button>
+              </div>
+              <!-- Delete Confirmation Modal -->
+              <div class="modal fade" id="deleteModal<%= motor['id']%>" tabindex="-1" aria-labelledby="deleteModalLabel<%= motor['id']%>" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="deleteModalLabel<%= motor['id']%>">Confirm Deletion</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">Are you sure want to delete this motor ?
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                      <form action="/motors/<%= motor['id'] %>/delete" method="POST">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
               </div>
             </td>
           </tr>
