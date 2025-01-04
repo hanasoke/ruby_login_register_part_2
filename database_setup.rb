@@ -65,12 +65,46 @@ DB.execute <<-SQL
         chair TEXT,
         country TEXT,
         manufacture TEXT,
-        price TEXT
+        price TEXT,
+        photo TEXT, 
+        warranty TEXT
     );
 SQL
+
+# Step 1: Create a new table with the updated schema 
+# DB.execute <<-SQL 
+#     CREATE TABLE IF NOT EXISTS motors_new (
+#         id INTEGER PRIMARY KEY AUTOINCREMENT,
+#         name TEXT,
+#         type TEXT,
+#         brand TEXT,
+#         chair INTEGER,
+#         country TEXT,
+#         manufacture TEXT,
+#         price TEXT
+#     );
+# SQL
+
+# Step 2: Copy data from the old table to the new table 
+# DB.execute <<-SQL
+#     INSERT INTO motors_new (id, name, type, brand, chair, country, manufacture, price)
+#     SELECT id, name, type, brand, CAST(chair AS INTEGER), country, manufacture, price FROM motors;
+# SQL
+
+# Step 3: Drop the old table
+# DB.execute("DROP TABLE motors;")
+
+# Step 4: Rename the new table to the original name
+# DB.execute("ALTER TABLE motors_new RENAME TO motors;")
 
 # begin 
 #     DB.execute("ALTER TABLE motors ADD COLUMN warranty TEXT;")
 # rescue SQLite3::SQLException => e 
 #     puts "Column 'warranty' already exists or another error occured: #{e.message}"
 # end 
+
+# DB.execute <<-SQL 
+#     CREATE TABLE IF NOT EXISTS leafs (
+#     )
+
+# DB.execute("DROP TABLE IF EXISTS motors;")
