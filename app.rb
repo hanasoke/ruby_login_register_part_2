@@ -217,6 +217,11 @@ get '/' do
     end
 end
 
+get '/show' do 
+    @title = 'My Profile'
+    erb :'profile/show', layout: :'layouts/main'
+end 
+
 # Read all users
 get '/user_list' do
     @title = "User List"

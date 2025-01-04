@@ -1,0 +1,49 @@
+<div class="container">
+  <div class="row">
+    <div class="col my-4">
+      <h1><%= current_profile['name']%> Profile</h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="card" style="width: 50rem">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <div class="mb-3 row">
+                <label for="name" class="col-sm-2 col-form-label">Name</label>
+                <div class="col-sm-10">
+                    <input type="text" readonly class="form-control-plaintext" id="name" value="<%= current_profile['name']%>">
+                </div>
+                
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="mb-3 row">
+                <label for="username" class="col-sm-2 col-form-label">Username</label>
+                <div class="col-sm-10">
+                <input type="text" readonly class="form-control-plaintext" id="username" value="<%= current_profile['username']%>">
+                </div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="mb-3 row">
+                <label for="email" class="col-sm-2 col-form-label">Email</label>
+                <div class="col-sm-10">
+                <input type="text" readonly class="form-control-plaintext" id="email" value="<%= current_profile['email']%>">
+                </div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="mb-3 row">
+                <label for="country" class="col-sm-2 col-form-label">Country</label>
+                <div class="col-sm-10">
+                <input type="text" readonly class="form-control-plaintext" id="country" value="<%= current_profile['country']%>">
+                </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
