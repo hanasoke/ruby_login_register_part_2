@@ -1,0 +1,42 @@
+<div class="container">
+  <div class="row">
+    <div class="col my-4 text-center">
+      <h1>Tree List</h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col mb-2">
+      <div class="btn-group float-end" role="group" aria-label="Database">
+        <a href="/leafs" class="btn btn-info">Leaf</a>
+        <a href="/seeds" class="btn btn-warning">Seed</a>
+        <a href="/add_tree" class="btn btn-success">Add A Tree</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <!-- Success Alert -->
+      <% if session[:session] %>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div><%= session[:success]%></div>
+        <button type="button" class="btn-closed" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <!-- Clear the flash message -->
+      <% session[:success] = nil %> <% end %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <table class="table table-hover">
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

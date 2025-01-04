@@ -227,6 +227,16 @@ get '/trees' do
     erb :'trees/index', layout: :'layouts/main'
 end 
 
+get '/leafs' do 
+    @title = 'Leaf'
+    erb :'trees/leafs/index', layout: :'layouts/main'
+end 
+
+get '/seeds' do 
+    @title = 'Seed'
+    erb :'trees/seeds/index', layout: :'layouts/main'
+end 
+
 # Read all users
 get '/user_list' do
     @title = "User List"
