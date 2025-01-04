@@ -44,9 +44,10 @@
           </tr>
         </thead>
         <tbody class="table-group-divider">
-          <% @motors.each do |motor|%>
+          <% @motors.each_with_index do |motor, index|%>
           <tr>
-            <td><%= motor['id']%></td>
+            <!-- Iteration number starts from 1 -->
+            <td><%= index + 1 %></td> 
             <td><%= motor['name']%></td>
             <td><%= motor['type']%></td>
             <td><%= motor['brand']%></td>
@@ -69,6 +70,7 @@
                 <!-- Delete Button triggers the modal -->
                 <button type="submit" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal<%= motor['id']%>">Delete</button>
               </div>
+
               <!-- Delete Confirmation Modal -->
               <div class="modal fade" id="deleteModal<%= motor['id']%>" tabindex="-1" aria-labelledby="deleteModalLabel<%= motor['id']%>" aria-hidden="true">
                 <div class="modal-dialog">

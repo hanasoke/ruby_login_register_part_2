@@ -244,6 +244,9 @@ end
 post '/register' do 
     @errors = validate_profile(params[:name], params[:username], params[:email], params[:password], params[:'re-password'], params[:country])
 
+    # Flash message
+    session[:success] = "Your Account has been registered."
+
     if @errors.empty? 
         name = params[:name]
         username = params[:username]
@@ -327,6 +330,9 @@ end
 post '/profiles/edit' do 
     redirect '/login' unless logged_in?
 
+    # Flash message
+    session[:success] = "Your Profile has been successfully updated"
+
     editing = true 
     @errors = editing_profile(params[:name], params[:username], params[:email], params[:password], params[:re_password], params[:country], editing: editing)
 
@@ -369,11 +375,14 @@ post '/forgot_password' do
     email = params[:email]
     @errors = []
 
+    session[:success] = "Password reset link sent to your email."
+
     if email.strip.empty?
         @errors << "Email cannot be blank."
     elsif !DB.execute("SELECT * FROM  profiles WHERE email = ?", [email]).first
         @errors << "Email not found in our records."
     else 
+        
         #Generate reset token (basic implementation, use a secure library in production)
         reset_token = SecureRandom.hex(20)
         DB.execute("UPDATE profiles SET reset_token = ? WHERE email = ?", [reset_token, email])
@@ -381,7 +390,6 @@ post '/forgot_password' do
         # Simulate sending an email (in production, send a real email)
         reset_url = "http://localhost:4567/reset_password/#{reset_token}"
         puts "Reset password link: #{reset_url}" # Replace with email sending logic
-        session[:message] = "Password reset link sent to your email."
         redirect '/login'
     end 
 
