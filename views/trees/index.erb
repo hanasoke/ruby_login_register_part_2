@@ -1,0 +1,30 @@
+<div class="container">
+  <div class="row">
+    <div class="col my-4 text-center">
+      <h1>Tree List</h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col mb-2">
+      <a href="/add_tree" class="btn btn-success float-end">Add A Motor</a>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <!-- Success Alert -->
+      <% if session[:session] %>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div><%= session[:success]%></div>
+        <button type="button" class="btn-closed" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <!-- Clear the flash message -->
+      <% session[:success] = nil %> <% end %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col"></div>
+  </div>
+</div>

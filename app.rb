@@ -222,6 +222,11 @@ get '/show' do
     erb :'profile/show', layout: :'layouts/main'
 end 
 
+get '/trees' do 
+    @title = 'Trees'
+    erb :'trees/index', layout: :'layouts/main'
+end 
+
 # Read all users
 get '/user_list' do
     @title = "User List"

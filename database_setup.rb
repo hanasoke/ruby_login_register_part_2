@@ -103,8 +103,38 @@ SQL
 #     puts "Column 'warranty' already exists or another error occured: #{e.message}"
 # end 
 
-# DB.execute <<-SQL 
-#     CREATE TABLE IF NOT EXISTS leafs (
-#     )
-
 # DB.execute("DROP TABLE IF EXISTS motors;")
+
+DB.execute <<-SQL 
+    CREATE TABLE IF NOT EXISTS leafs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        type TEXT,
+        age INTEGER,
+        description TEXT
+    );
+SQL
+
+DB.execute <<-SQL 
+    CREATE TABLE IF NOT EXISTS trees (
+     id INTEGER PRIMARY KEY AUTOINCREMENT,
+        type TEXT,
+        leaf_id INTEGER,
+        age INTEGER,
+        seed_id INTEGER,
+        description TEXT,
+        FOREIGN KEY (leaf_id) REFERENCES leafs (id),
+        FOREIGN KEY (seed_id) REFERENCES seeds (id)
+    );
+SQL
+
+DB.execute <<-SQL 
+    CREATE TABLE IF NOT EXISTS seeds (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT
+    );
+SQL
+
+# DB.execute("PRAGMA foreign_keys = ON;")
+
+# puts DB.execute("PRAGMA foreign_key_list(trees);")
