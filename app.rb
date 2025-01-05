@@ -222,26 +222,6 @@ get '/show' do
     erb :'profile/show', layout: :'layouts/main'
 end 
 
-get '/trees' do 
-    @title = 'Trees'
-    erb :'trees/index', layout: :'layouts/main'
-end 
-
-get '/add_tree' do 
-    @title = "Add A Tree"
-    erb :'trees/add', layout: :'layouts/main'
-end 
-
-get '/leafs' do 
-    @title = 'Leaf'
-    erb :'trees/leafs/index', layout: :'layouts/main'
-end 
-
-get '/seeds' do 
-    @title = 'Seed'
-    erb :'trees/seeds/index', layout: :'layouts/main'
-end 
-
 # Read all users
 get '/user_list' do
     @title = "User List"
@@ -689,4 +669,34 @@ post '/motors/:id/delete' do
     # Flash message
     session[:success] = "Motor has been successfully deleted."
     redirect '/motors'
+end 
+
+get '/leafs' do 
+    @title = 'Leaf'
+    erb :'trees/leafs/index', layout: :'layouts/main'
+end 
+
+get '/seeds' do 
+    @title = 'Seed'
+    erb :'trees/seeds/index', layout: :'layouts/main'
+end 
+
+get '/trees' do 
+    @title = 'Trees'
+    erb :'trees/index', layout: :'layouts/main'
+end 
+
+get '/add_tree' do 
+    @title = "Add A Tree"
+    erb :'trees/add', layout: :'layouts/main'
+end 
+
+post '/adding_tree' do 
+    # Flash message
+    session[:success] = "The Tree has been successfully added."
+
+    @errors = validate_tree
+
+    @title = 'Adding a tree'
+
 end 

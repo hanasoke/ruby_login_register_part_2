@@ -4,19 +4,12 @@
   </div>
 
   <div class="row">
-    <div class="col">
-      <% if @errors.any? %> <% @errors.each do |error| %>
-      <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <div></div>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-      <% end %> <% end %>
-    </div>
+    <div class="col"></div>
   </div>
 
   <div class="row">
     <div class="col">
-      <form action="/addting_tree" method="post" enctype="multipart/form-data">
+      <form action="/adding_tree" method="post" enctype="multipart/form-data">
         <div class="mb-3">
           <label for="name" class="form-label">Name</label>
           <input type="text" name="name" id="name" class="form-control" value="<%= params[:name]%>" />
@@ -24,9 +17,54 @@
 
         <div class="mb-3">
           <label for="type">type</label>
-          <select type="text" name="type" id="type"></select>
+          <select class="form-select" name="type" id="type" aria-label="Selected Input">
+            <option value="<% params[:type] %>">Select the Type</option>
+            <option value="Conniferous">Conniferous</option>
+            <option value="Aspen">Aspen</option>
+            <option value="Birch">Birch</option>
+            <option value="Cedar">Cedar</option>
+            <option value="Cherry">Cherry</option>
+            <option value="Conifer">Conifer</option>
+            <option value="Cottonwood">Cottonwood</option>
+            <option value="Crabapple">Crabapple</option>
+            <option value="Crepe Myrtles">Crepe Myrtles</option>
+          </select>
         </div>
+
+        <div class="mb-3">
+          <label for="leaf">Leaf</label>
+          <select class="form-select" type="text" name="seed_id" id="seed_id">
+            <option value="xxx">YYY</option>
+            <option value="xxx">YYY</option>
+            <option value="xxx">YYY</option>
+            <option value="xxx">YYY</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="age" class="form-label">Age</label>
+          <input type="number" class="form-control" id="age" name="age" placeholder="input your age" />
+        </div>
+
+        <div class="mb-3">
+          <label for="leaf">Seed</label>
+          <select class="form-select" type="text" name="leaf_id" id="leaf_id">
+            <option value="xxx">XXXX</option>
+            <option value="xxx">XXXX</option>
+            <option value="xxx">XXXX</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <div class="form-floating">
+            <textarea class="form-control" placeholder="Description" id="description" style="height: 150px"></textarea>
+            <label for="description">Describe the Tree</label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary float-end">Update</button>
       </form>
+      <a href="/trees" class="btn btn-light">Back</a>
     </div>
   </div>
 </div>
