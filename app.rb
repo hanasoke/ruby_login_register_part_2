@@ -206,14 +206,30 @@ def format_rupiah(number)
     "Rp #{number.to_i.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1.').reverse}"
 end
 
+def validate_leaf(name, type, age, description) 
+    errors = []
+    errors << "Name Cannot be blank." if name.nil? || name.strip.empty?
+    errors << "Type Cannot be blank." if type.nil? || type.strip.empty?
+    errors << "Age Cannot be blank." if age.nil? || age.strip.empty?
+
+    errors << "Description Cannot be blank." if description.nil? || description.strip.empty?
+
+end 
+
 helpers do 
-    def validate_tree(params) 
+    def validate_tree(name, type, leaf, seed, description) 
         errors = []
         errors << "Name is required." if params[:name].nil? || params[:name].strip.empty?
         errors << "Type is required." if params[:type].nil? || params[:type].strip.empty?
         errors << "Leaf ID must be valid." unless params[:leaf_id].to_i_positive? 
+
         errors << "Seed ID must be valid." unless params[:seed_id].to_i.positive?
+
         errors << "Age must be a valid number." unless params[:age].to_i_positive?
+
+        errors << "Description is required." if params[:description].nil? || params[:description].strip.empty?
+
+
         errors 
     end 
 end
@@ -684,16 +700,19 @@ end
 
 get '/leafs' do 
     @title = 'Leaf'
+    @tree = DB.execute("Select * FROM leafs")
     erb :'trees/leafs/index', layout: :'layouts/main'
 end 
 
 get '/seeds' do 
     @title = 'Seed'
+    @tree = DB.execute("Select * FROM seeds")
     erb :'trees/seeds/index', layout: :'layouts/main'
 end 
 
 get '/trees' do 
     @title = 'Trees'
+    @tree = DB.execute("Select * FROM trees")
     erb :'trees/index', layout: :'layouts/main'
 end 
 
