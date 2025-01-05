@@ -139,8 +139,8 @@ SQL
 
 # puts DB.execute("PRAGMA foreign_key_list(trees);")
 
-begin 
-    DB.execute("ALTER TABLE trees ADD COLUMN name TEXT;")
-rescue SQLite3::SQLException => e 
-    puts "Column 'name' already exists or another error occured: #{e.message}"
-end 
+# begin 
+#     DB.execute("ALTER TABLE trees ADD COLUMN name TEXT;")
+# rescue SQLite3::SQLException => e 
+#     puts "Column 'name' already exists or another error occured: #{e.message}"
+# end 

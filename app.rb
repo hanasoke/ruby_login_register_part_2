@@ -201,10 +201,21 @@ def validate_file(file)
     end
     errors
 end
-    
 
 def format_rupiah(number) 
     "Rp #{number.to_i.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1.').reverse}"
+end
+
+helpers do 
+    def validate_tree(params) 
+        errors = []
+        errors << "Name is required." if params[:name].nil? || params[:name].strip.empty?
+        errors << "Type is required." if params[:type].nil? || params[:type].strip.empty?
+        errors << "Leaf ID must be valid." unless params[:leaf_id].to_i_positive? 
+        errors << "Seed ID must be valid." unless params[:seed_id].to_i.positive?
+        errors << "Age must be a valid number." unless params[:age].to_i_positive?
+        errors 
+    end 
 end
 
 # Routes 
@@ -688,15 +699,46 @@ end
 
 get '/add_tree' do 
     @title = "Add A Tree"
+    @errors = []
     erb :'trees/add', layout: :'layouts/main'
 end 
 
+# Create a new tree
 post '/adding_tree' do 
-    # Flash message
-    session[:success] = "The Tree has been successfully added."
+    tree_name = params[:name]
+    tree_type = params[:type]
+    tree_leaf_id = params[:leaf_id]
+    tree_seed_id = params[:seed_id]
+    tree_age = params[:age]
+    tree_description = params[:description]
 
-    @errors = validate_tree
+    @errors = []
 
-    @title = 'Adding a tree'
+    # Validate tree inputs
+    @errors << "Tree name is required." if tree_name.nil? || tree_name.strip.empty?
+    @errors << "Tree type is required." if tree_type.nil? || tree_type.strip.empty?
+    @errors << "Leaf must be selected." if tree_leaf_id.nil? || tree_leaf_id.strip.empty?
+    @errors << "Seed must be a valid number." if tree_seed_id.nil? || tree_seed_id.to_i_positive?
+    @errors << "Age must be a valid number." unless tree_age.to_i.positive?
 
+
+    # Check if foreign keys exist
+    leaf_exists = DB.get_first_value("SELECT COUNT(*) FROM leafs WHERE id = ?", [tree_leaf_id.to_i])
+    seed_exists = DB.get_first_value("SELECT COUNT(*) FROM seeds WHERE id = ?", [tree_seed_id.to_i])
+    @errors << "Leaf ID does not exist." unless leaf_exists.positive?
+    @errors << "Seed ID does not exist." unless seed_exists.positive?
+
+    # If there are errors,re-render the form
+    if @errors.any?
+        erb :'trees/add', layout: :'layouts/main'
+    else 
+        # insert the new tree into the database
+        DB.execute(
+            "INSERT INTO trees (name, type, leaf_id, seed_id, age, description) VALUES (?, ?, ?, ?, ?, ?)",
+            [tree_name, tree_type, tree_leaf_id.to_i, tree_seed_id.to_i, tree_age.to_i, tree_description]
+        )
+        # Flash message
+        session[:success] = "The Tree has been successfully added."
+        redirect '/trees'
+    end 
 end 
