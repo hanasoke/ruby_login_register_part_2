@@ -1,0 +1,32 @@
+<div class="container">
+  <div class="row">
+    <div class="col my-4">Adding A Tree</div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <% if @errors.any? %> <% @errors.each do |error| %>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div></div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <% end %> <% end %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <form action="/addting_tree" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label for="name" class="form-label">Name</label>
+          <input type="text" name="name" id="name" class="form-control" value="<%= params[:name]%>" />
+        </div>
+
+        <div class="mb-3">
+          <label for="type">type</label>
+          <select type="text" name="type" id="type"></select>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

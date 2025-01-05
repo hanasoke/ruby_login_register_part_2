@@ -227,6 +227,11 @@ get '/trees' do
     erb :'trees/index', layout: :'layouts/main'
 end 
 
+get '/add_tree' do 
+    @title = "Add A Tree"
+    erb :'trees/add', layout: :'layouts/main'
+end 
+
 get '/leafs' do 
     @title = 'Leaf'
     erb :'trees/leafs/index', layout: :'layouts/main'
