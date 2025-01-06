@@ -721,12 +721,14 @@ get '/leafs' do
     erb :'trees/leafs/index', layout: :'layouts/main'
 end 
 
+# Form to add a leaf
 get '/add_leaf' do 
     @title = 'Add A Leaf'
     @errors = []
     erb :'trees/leafs/add', layout: :'layouts/main'
 end
 
+# adding a leaf
 post '/adding_leaf' do 
     @errors = validate_leaf(params[:name], params[:type], params[:age], params[:description])
 
@@ -741,6 +743,14 @@ post '/adding_leaf' do
     else 
         erb :'trees/leafs/add', layout: :'layouts/main'
     end 
+end 
+
+# Form to edit a leaf 
+get '/seeds/:id/edit' do 
+    @title = "Edit A leaf"
+    @seed = DB.execute("SELECT * FROM leads WHERE id = ?", [params[:id]]).first
+    @errors = []
+    erb :'trees/leafs/edit', layout: :'layouts/main'
 end 
 
 get '/seeds' do 

@@ -1,0 +1,58 @@
+<div class="container">
+  <div class="row">
+    <div class="col my-4">
+      <h2>Edit A Leaf</h2>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div></div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <form action="#" method="post" enctype="multipart/form-data">
+        <!-- Hidden Method -->
+        <div class="mb-3">
+          <input type="hidden" name="_method" value="post" />
+        </div>
+
+        <!-- Name Field -->
+        <div class="mb-3">
+          <label for="name">Name</label>
+          <input type="text" class="form-control" name="name" id="name" value="#" />
+        </div>
+
+        <div class="mb-3">
+          <label for="type">Type</label>
+          <select class="form-select" aria-label="Selected Input" id="type" name="type">
+            <option selected value="#">Select the Type</option>
+            <option value="linear">Linear</option>
+            <option value="ovate">Ovate</option>
+            <option value="elliptical">Elliptical</option>
+            <option value="oblong">Oblong</option>
+            <option value="cordate">Cordate</option>
+            <option value="lanceolate">Lanceolate</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="age">Age</label>
+          <input type="text" class="form-control" name="age" id="age" value="#" />
+        </div>
+
+        <div class="form-floating mb-3">
+          <textarea class="form-control" placeholder="Leave a comment here" id="description" style="height: 105px" name="description" value="#"></textarea>
+          <label for="description">My Description</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary float-end">Update</button>
+      </form>
+    </div>
+  </div>
+</div>
