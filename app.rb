@@ -217,7 +217,7 @@ def validate_leaf(name, type, age, description)
     errors 
 end 
 
-def validate_seed(name) 
+def validate_seed(name, id = nil) 
     errors = []
 
     errors << "Name Cannot be blank." if name.nil? || name.strip.empty?
@@ -714,14 +714,12 @@ get '/leafs' do
     erb :'trees/leafs/index', layout: :'layouts/main'
 end 
 
+
+
 get '/seeds' do 
     @title = 'Seed'
     @seeds = DB.execute("SELECT * FROM seeds")
     erb :'trees/seeds/index', layout: :'layouts/main'
-
-    # @title = 'List of Cars'
-    # @cars = DB.execute("SELECT * FROM cars")
-    # erb :'cars/show', layout: :'layouts/main' 
 end 
 
 get '/add_seed' do 
@@ -736,10 +734,10 @@ post '/adding_seed' do
     if @errors.empty? 
 
         # Flash message
-        session[:success] = "Seed has been successfully added."
+        session[:success] = "A Seed has been successfully added."
 
         # Insert seed details into the database
-        DB.execute("INSERT INTO seeds (name)", [params[:name]])
+        DB.execute("INSERT INTO seeds (name) VALUES (?)", [params[:name]])
         redirect '/seeds'
     else 
         erb :'trees/seeds/add', layout: :'layouts/main'
@@ -748,7 +746,7 @@ end
 
 # Form to edit a seed
 get '/seeds/:id/edit' do 
-    @title = "Edit a seed"
+    @title = "Edit A seed"
     @seed = DB.execute("SELECT * FROM seeds WHERE id = ?", [params[:id]]).first 
     @errors = []
     erb :'trees/seeds/edit', layout: :'layouts/main'
@@ -758,8 +756,8 @@ end
 post '/seeds/:id' do 
 
     # Flash message
-    session[:success] = "Seed has been successfully updated."
-    @errors = validate_seed(params[:name], params[:id]).first
+    session[:success] = "A Seed has been successfully updated."
+    @errors = validate_seed(params[:name], params[:id])
 
     if @errors.empty?
         # Update the car in the database
@@ -774,6 +772,14 @@ post '/seeds/:id' do
     end 
 end
 
+# DELETE a Seed
+post '/seeds/:id/delete' do 
+    # Flash message
+    session[:success] = "A Seed has been successfully deleted."
+
+    DB.execute("DELETE FROM seeds WHERE id = ?", [params[:id]])
+    redirect '/seeds'
+end 
 
 get '/trees' do 
     @title = 'Trees'

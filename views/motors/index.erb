@@ -79,12 +79,16 @@
                       <h5 class="modal-title" id="deleteModalLabel<%= motor['id']%>">Confirm Deletion</h5>
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+
                     <div class="modal-body mb-3">Are you sure want to delete this motor ?</div>
+
                     <div class="modal-footer">
+
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                       <form action="/motors/<%= motor['id'] %>/delete" method="POST">
                         <button type="submit" class="btn btn-danger">Delete</button>
                       </form>
+                      
                     </div>
                   </div>
                 </div>
