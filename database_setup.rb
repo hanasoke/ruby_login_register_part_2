@@ -117,7 +117,7 @@ SQL
 
 DB.execute <<-SQL 
     CREATE TABLE IF NOT EXISTS trees (
-     id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         type TEXT,
         leaf_id INTEGER,
         age INTEGER,

@@ -206,11 +206,19 @@ def format_rupiah(number)
     "Rp #{number.to_i.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1.').reverse}"
 end
 
-def validate_leaf(name, type, age, description) 
+def validate_leaf(name, type, age, description, id = nil) 
     errors = []
     errors << "Name Cannot be blank." if name.nil? || name.strip.empty?
     errors << "Type Cannot be blank." if type.nil? || type.strip.empty?
-    errors << "Age Cannot be blank." if age.nil? || age.strip.empty?
+    
+    # check for valid age
+    if age.nil? || age.strip.empty?
+        errors << "Age cannot be blank."
+    elsif age.to_s !~ /\A\d+(\.\d{1,2})?\z/
+        errors << "Age must be a valid number."
+    elsif age.to_f <= 0
+        errors << "Age must be a positive number"
+    end 
 
     errors << "Description Cannot be blank." if description.nil? || description.strip.empty?
 
@@ -219,9 +227,7 @@ end
 
 def validate_seed(name, id = nil) 
     errors = []
-
     errors << "Name Cannot be blank." if name.nil? || name.strip.empty?
-
     errors
 end 
 
@@ -714,7 +720,33 @@ get '/leafs' do
     erb :'trees/leafs/index', layout: :'layouts/main'
 end 
 
+get '/add_leaf' do 
+    @title = 'Add A Leaf'
+    @errors = []
+    erb :'trees/leafs/add', layout: :'layouts/main'
+end
 
+post '/adding_leaf' do 
+    @errors = validate_leaf(params[:name], params[:type], params[:age], params[:description])
+
+    if @errors.empty?
+
+        # Flash message
+        session[:success] = "A Seed has been successfully added."
+
+        # Insert seed details into the database
+        DB.execute("INSERT INTO leafs (name, type, age, description) VALUES (?)", [params[:name], params[:type], params[:age], params[:description]])
+        redirect '/leafs'
+    else 
+        erb :'trees/leafs/add', layout: :'layouts/main'
+    end 
+end 
+
+get '/add_seed' do 
+    @title = 'Add A Leaf'
+    @errors = []
+    erb :'trees/leafs/add', layout :'layouts/main'
+end 
 
 get '/seeds' do 
     @title = 'Seed'
