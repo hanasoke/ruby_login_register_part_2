@@ -214,6 +214,15 @@ def validate_leaf(name, type, age, description)
 
     errors << "Description Cannot be blank." if description.nil? || description.strip.empty?
 
+    errors 
+end 
+
+def validate_seed(name) 
+    errors = []
+
+    errors << "Name Cannot be blank." if name.nil? || name.strip.empty?
+
+    errors
 end 
 
 helpers do 
@@ -282,7 +291,8 @@ post '/register' do
             
         rescue SQLite3::ConstraintException
             @errors << "Username already exists"
-        end 
+        end
+         
     end 
 
     erb :register, layout: :'layouts/admin'
@@ -700,15 +710,70 @@ end
 
 get '/leafs' do 
     @title = 'Leaf'
-    @tree = DB.execute("Select * FROM leafs")
+    @leafs = DB.execute("Select * FROM leafs")
     erb :'trees/leafs/index', layout: :'layouts/main'
 end 
 
 get '/seeds' do 
     @title = 'Seed'
-    @tree = DB.execute("Select * FROM seeds")
+    @seeds = DB.execute("SELECT * FROM seeds")
     erb :'trees/seeds/index', layout: :'layouts/main'
+
+    # @title = 'List of Cars'
+    # @cars = DB.execute("SELECT * FROM cars")
+    # erb :'cars/show', layout: :'layouts/main' 
 end 
+
+get '/add_seed' do 
+    @title = 'Add A Seed'
+    @errors = []
+    erb :'trees/seeds/add', layout: :'layouts/main'
+end 
+
+post '/adding_seed' do 
+    @errors = validate_seed(params[:name])
+
+    if @errors.empty? 
+
+        # Flash message
+        session[:success] = "Seed has been successfully added."
+
+        # Insert seed details into the database
+        DB.execute("INSERT INTO seeds (name)", [params[:name]])
+        redirect '/seeds'
+    else 
+        erb :'trees/seeds/add', layout: :'layouts/main'
+    end 
+end 
+
+# Form to edit a seed
+get '/seeds/:id/edit' do 
+    @title = "Edit a seed"
+    @seed = DB.execute("SELECT * FROM seeds WHERE id = ?", [params[:id]]).first 
+    @errors = []
+    erb :'trees/seeds/edit', layout: :'layouts/main'
+end 
+
+# Update a seed
+post '/seeds/:id' do 
+
+    # Flash message
+    session[:success] = "Seed has been successfully updated."
+    @errors = validate_seed(params[:name], params[:id]).first
+
+    if @errors.empty?
+        # Update the car in the database
+        DB.execute("UPDATE seeds SET name = ? WHERE id = ?", 
+            [params[:name], params[:id]])
+        redirect '/seeds'
+    else 
+        @seed = {
+            'name' => params[:name]
+        }
+        erb :'trees/seeds/add', layout: :'layouts/main'
+    end 
+end
+
 
 get '/trees' do 
     @title = 'Trees'
