@@ -706,17 +706,18 @@ end
 
 # Delete a motor
 post '/motors/:id/delete' do 
+    # Flash message
+    session[:success] = "Motor has been successfully deleted."
+
     # Delete logic
     DB.execute("DELETE FROM motors WHERE id = ?", [params[:id]])
 
-    # Flash message
-    session[:success] = "Motor has been successfully deleted."
     redirect '/motors'
 end 
 
 get '/leafs' do 
     @title = 'Leaf'
-    @leafs = DB.execute("Select * FROM leafs")
+    @leafs = DB.execute("SELECT * FROM leafs")
     erb :'trees/leafs/index', layout: :'layouts/main'
 end 
 
@@ -735,17 +736,11 @@ post '/adding_leaf' do
         session[:success] = "A Seed has been successfully added."
 
         # Insert seed details into the database
-        DB.execute("INSERT INTO leafs (name, type, age, description) VALUES (?)", [params[:name], params[:type], params[:age], params[:description]])
+        DB.execute("INSERT INTO leafs (name, type, age, description) VALUES (?, ?, ?, ?)", [params[:name], params[:type], params[:age], params[:description]])
         redirect '/leafs'
     else 
         erb :'trees/leafs/add', layout: :'layouts/main'
     end 
-end 
-
-get '/add_seed' do 
-    @title = 'Add A Leaf'
-    @errors = []
-    erb :'trees/leafs/add', layout :'layouts/main'
 end 
 
 get '/seeds' do 

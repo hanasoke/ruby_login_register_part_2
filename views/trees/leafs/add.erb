@@ -18,15 +18,30 @@
     <div class="col">
       <form action="/adding_leaf" method="post" enctype="multipart/form-data">
         <div class="mb-3">
-          <label for="name" class="form-control">Name</label>
+          <label for="name" class="text">Name</label>
           <input type="text" class="form-control" name="name" id="name" value="<%= params[:name]%>" />
         </div>
         <div class="mb-3">
-          <label for="username">username</label>
-          <input type="text" name="username" id="username" />
+          <label for="type">Type</label>
+          <select class="form-select" aria-label="Selected Input" id="type" name="type">
+            <option selected value="<%= params[:type]%>">Select the Type</option>
+            <option value="linear">Linear</option>
+            <option value="ovate">Ovate</option>
+            <option value="elliptical">Elliptical</option>
+            <option value="oblong">Oblong</option>
+            <option value="cordate">Cordate</option>
+            <option value="lanceolate">Lanceolate</option>
+          </select>
         </div>
-        <div class="mb-3"></div>
-        <div class="mb-3"></div>
+        <div class="mb-3">
+          <label for="age">Age</label>
+          <input class="form-control" type="number" name="age" id="age" value="<%= params[:age]%>" />
+        </div>
+        <div class="form-floating mb-3">
+          <textarea class="form-control" placeholder="Leave a comment here" id="description" style="height: 105px" name="description" value="<%= params[:description]%>"></textarea>
+          <label for="description">My Description</label>
+        </div>
+        <button type="submit" class="btn btn-primary float-end">Submit</button>
       </form>
     </div>
   </div>

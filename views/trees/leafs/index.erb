@@ -1,7 +1,7 @@
 <div class="container">
   <div class="row">
     <div class="col my-4 text-center">
-      <h1>Tree List</h1>
+      <h1>Leaf List</h1>
     </div>
   </div>
 
@@ -21,12 +21,13 @@
     <div class="col">
       <!-- Success Alert -->
       <% if session[:success] %>
-      <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <div><%= session[:success]%></div>
-        <button type="button" class="btn-closed" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-      <!-- Clear the flash message -->
-      <% session[:success] = nil %> <% end %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <div><%= session[:success]%></div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <!-- Clear the flash message -->
+        <% session[:success] = nil %> 
+      <% end %>
     </div>
   </div>
 
@@ -54,7 +55,7 @@
             <td><%= leaf['description']%></td>
             <td>
               <div class="btn-group" role="group">
-                <a href="/leafs/<%= seed['id'] %>/edit" class="btn btn-info">Edit</a>
+                <a href="/leafs/<%= leaf['id'] %>/edit" class="btn btn-info">Edit</a>
 
                 <!-- Delete Button triggers the modal -->
                 <button type="submit" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal<%= leaf['id']%>">Delete</button>
@@ -65,7 +66,7 @@
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title" id="deleteModalLabel<%= seed['id']%>">Confirm Deletion</h5>
+                      <h5 class="modal-title" id="deleteModalLabel<%= leaf['id']%>">Confirm Deletion</h5>
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
@@ -77,12 +78,13 @@
                         <button type="submit" class="btn btn-danger">Delete</button>
                       </form>
                     </div>
-                    
                   </div>
                 </div>
               </div>
             </td>
           </tr>
+          <% end %>
+
         </tbody>
       </table>
     </div>
