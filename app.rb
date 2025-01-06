@@ -746,9 +746,9 @@ post '/adding_leaf' do
 end 
 
 # Form to edit a leaf 
-get '/seeds/:id/edit' do 
+get '/leafs/:id/edit' do 
     @title = "Edit A leaf"
-    @seed = DB.execute("SELECT * FROM leads WHERE id = ?", [params[:id]]).first
+    @leaf = DB.execute("SELECT * FROM leafs WHERE id = ?", [params[:id]]).first
     @errors = []
     erb :'trees/leafs/edit', layout: :'layouts/main'
 end 
