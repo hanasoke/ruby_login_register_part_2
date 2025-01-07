@@ -70,10 +70,35 @@
             <td>
               <div class="btn-group" role="group">
                 <a href="/trees/<%= tree['id'] %>/edit" class="btn btn-info">Edit</a>
-                <button class="btn btn-danger">XXXX</button>
+
+                <!-- Delete Button triggers the modal -->
+                <button type="submit" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal<%= tree['id']%>">Delete</button>
               </div>
+
+              <!-- Delete Confirmation Modal -->
+              <div class="modal fade" id="deleteModal<%= tree['id']%>" tabindex="-1" aria-labelledby="deleteModalLabel<%= tree['id'] %>" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="deleteModalLabel<%= tree['id']%>">Confirm Deletion</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body mb-3">Are you sure want to delete this tree ?</div>
+
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                      <form action="/trees/<%= tree['id'] %>/delete" method="POST">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
             </td>
-            
+
           </tr>
           <% end %>
         </tbody>

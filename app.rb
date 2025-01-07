@@ -950,9 +950,19 @@ post '/trees/:id/update' do
     else 
         # Re-Render the edit form with error messages
         @errors = errors 
+
         @tree = { id: params[:id], name: name, type: type, leaf_id: leaf_id, age: age, seed_id: seed_id, description: description }
         @leaves = DB.execute("SELECT id, name FROM leafs")
         @seeds = DB.execute("SELECT ID, name FROM seeds")
         erb :'trees/edit', layout: :'layouts/main'
     end 
+end 
+
+# Delete a tree
+post '/trees/:id/delete' do 
+    # Flash message
+    session[:success] = "A Seed has been successfully deleted."
+
+    DB.execute("DELETE FROM trees WHERE id = ?", [params[:id]])
+    redirect '/trees'
 end 
