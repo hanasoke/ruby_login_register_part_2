@@ -778,6 +778,14 @@ post '/leafs/:id' do
     end 
 end 
 
+# Delete a leaf
+post '/leafs/:id/delete' do 
+    # Flash message
+    session[:success] = "A Seed has been successfully deleted."
+
+    DB.execute("DELETE FROM leafs WHERE id = ?", [params[:id]])
+    redirect '/leafs'
+end 
 
 get '/seeds' do 
     @title = 'Seed'
