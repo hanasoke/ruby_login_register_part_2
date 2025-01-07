@@ -919,3 +919,40 @@ get '/trees/:id/edit' do
 
     erb :'trees/edit', layout: :'layouts/main'
 end 
+
+post '/trees/:id/update' do 
+    # Retrieve form data
+    name = params[:name]
+    type = params[:type]
+    leaf_id = params[:leaf_id]
+    age = params[:age]
+    seed_id = params[:seed_id]
+    description = params[:description]
+
+    # Validate input (optional, based on yout validation logic)
+    errors = []
+    errors << "Name is required." if name.strip.empty?
+    errors << "Type is required." if type.strip.empty?
+    errors << "Leaf is required." if leaf_id.strip.empty?
+    errors << "Age must be a valid number." if seed_id.strip.empty?
+    errors << "Description is required." if description.strip.empty?
+
+    if errors.empty?
+        # Update the tree in the database
+        DB.execute(
+            "UPDATE trees SET name = ?, type = ?, leaf_id = ?, age = ?, seed_id = ?, description = ? WHERE id = ?",
+            [name, type, leaf_id, age, seed_id, description, params[:id]]
+        )
+
+        # Redirect with success message
+        session[:success] = "Tree successfully updated."
+        redirect "/trees"
+    else 
+        # Re-Render the edit form with error messages
+        @errors = errors 
+        @tree = { id: params[:id], name: name, type: type, leaf_id: leaf_id, age: age, seed_id: seed_id, description: description }
+        @leaves = DB.execute("SELECT id, name FROM leafs")
+        @seeds = DB.execute("SELECT ID, name FROM seeds")
+        erb :'trees/edit', layout: :'layouts/main'
+    end 
+end 

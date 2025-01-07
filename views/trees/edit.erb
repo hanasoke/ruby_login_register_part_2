@@ -18,7 +18,7 @@
 
   <div class="row">
     <div class="col">
-      <form action="/trees/<%= @tree['id'] %>" method="post" enctype="multipart/form-data">
+      <form action="/trees/<%= @tree['id'] %>/update" method="post" enctype="multipart/form-data">
         <!-- Hidden Method -->
         <div class="mb-3">
           <input type="hidden" name="_method" value="post" />
@@ -27,13 +27,14 @@
         <!-- Name Field -->
         <div class="mb-3">
           <label for="name">Name</label>
-          <input type="text" class="form-control" name="name" id="name" value="#" />
+          <input type="text" class="form-control" name="name" id="name" value="<%= @tree['name']%>"/>
         </div>
 
+        <!-- Type -->
         <div class="mb-3">
-          <label for="type">type</label>
-          <select class="form-select" name="type" id="type" aria-label="Selected Input">
-            <option value="#">Choose Tree Types</option>
+          <label for="type" class="form-label">Type</label>
+          <select class="form-select" name="type" id="type" aria-label="Selected Type">
+            <option value="<%= @tree['type'] %>"><%= @tree['type'] %></option>
             <option value="Conniferous">Conniferous</option>
             <option value="Aspen">Aspen</option>
             <option value="Birch">Birch</option>
@@ -46,28 +47,39 @@
           </select>
         </div>
 
+        <!-- Leaf Dropdown -->
         <div class="mb-3">
-          <label for="leaf">Leaf</label>
+          <label for="leaf_id" class="form-label">Leaf</label>
           <select class="form-select" name="leaf_id" id="leaf_id">
-            <option selected value="#">#</option>
+            <% @leaves.each do |leaf| %>
+                <option selected value="<%= leaf['id'] %>" <%= 'selected' if leaf['id'] == @tree['leaf_id'] %>>
+                    <%= leaf['name']%>
+                </option>
+            <% end %>
           </select>
         </div>
 
+        <!-- Age -->
         <div class="mb-3">
           <label for="age" class="form-label">Age</label>
-          <input type="number" class="form-control" id="age" name="age" placeholder="input your age" value="#" />
+          <input type="number" class="form-control" id="age" name="age" placeholder="input your age" value="<%= @tree['age'] %>" required />
         </div>
 
+        <!-- Seed Dropdown -->
         <div class="mb-3">
-          <label for="seed_id">Seed</label>
+          <label for="seed_id" class="form-label">Seed</label>
           <select class="form-select" name="seed_id" id="seed_id">
-            <option selected value="#">#</option>
+            <% @seeds.each do |seed| %>
+                <option selected value="<%= seed['id'] %>" <%= 'selected' if seed['id'] == @tree['seed_id'] %>>
+                    <%= seed['name'] %>
+                </option>
+            <% end %>
           </select>
         </div>
 
         <div class="mb-3">
           <div class="form-floating">
-            <textarea class="form-control" placeholder="Description" name="description" id="description" style="height: 150px"></textarea>
+            <textarea class="form-control" placeholder="Description" name="description" id="description" style="height: 150px"><%= @tree['description'] %></textarea>
             <label for="description">Describe the Tree</label>
           </div>
         </div>
