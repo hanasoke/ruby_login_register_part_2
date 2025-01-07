@@ -221,7 +221,6 @@ def validate_leaf(name, type, age, description, id = nil)
     end 
 
     errors << "Description Cannot be blank." if description.nil? || description.strip.empty?
-
     errors 
 end 
 
@@ -243,7 +242,6 @@ helpers do
         errors << "Age must be a valid number." unless params[:age].to_i_positive?
 
         errors << "Description is required." if params[:description].nil? || params[:description].strip.empty?
-
 
         errors 
     end 
@@ -753,6 +751,34 @@ get '/leafs/:id/edit' do
     erb :'trees/leafs/edit', layout: :'layouts/main'
 end 
 
+# Update a leaf
+post '/leafs/:id' do 
+    @errors = validate_leaf(params[:name], params[:type], params[:age], params[:description], params[:id])
+
+    if @errors.empty? 
+
+        # Flash Message
+        session[:success] = "A Leaf has been successfully updated."
+        # Update the leaf in the database
+        DB.execute("UPDATE leafs SET name = ?, type = ?, age = ?, description = ? WHERE id = ?", [params[:name], params[:type], params[:age], params[:description], params[:id]])
+
+        redirect '/leafs'
+    else 
+        # Handle validation errors and re-render the edit form
+        original_leaf = DB.execute("SELECT * FROM leafs WHERE id = ?", [params[:id]]).first
+
+        @leaf = {
+            'id' => params[:id],
+            'name' => params[:name] || original_leaf['name'],
+            'type' => params[:type] || original_leaf['type'],
+            'age' => params[:age] || original_leaf['age'],
+            'description' => params[:description] || original_leaf['description']
+        }
+        erb :'trees/leafs/edit', layout: :'layouts/main'
+    end 
+end 
+
+
 get '/seeds' do 
     @title = 'Seed'
     @seeds = DB.execute("SELECT * FROM seeds")
@@ -791,7 +817,6 @@ end
 
 # Update a seed
 post '/seeds/:id' do 
-
     # Flash message
     session[:success] = "A Seed has been successfully updated."
     @errors = validate_seed(params[:name], params[:id])
@@ -802,10 +827,14 @@ post '/seeds/:id' do
             [params[:name], params[:id]])
         redirect '/seeds'
     else 
+        # Handle validation errors and re-render the edit form
+        original_seed = DB.execute("SELECT * FROM seeds WHERE id = ?", [params[:id]]).first
+        # Merge seeds input withg original data to retain seed edits 
         @seed = {
-            'name' => params[:name]
+            'id' => params[:id],
+            'name' => params[:name] || original_seed['name']
         }
-        erb :'trees/seeds/add', layout: :'layouts/main'
+        erb :'trees/seeds/edit', layout: :'layouts/main'
     end 
 end
 

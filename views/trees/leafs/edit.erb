@@ -7,16 +7,20 @@
 
   <div class="row">
     <div class="col">
-      <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <div></div>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
+      <% if @errors.any? %> 
+        <% @errors.each do |error| %>
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div><%= error %></div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        <% end %> 
+      <% end %>
     </div>
   </div>
 
-  <div class="row">
+  <div class="row mb-5">
     <div class="col">
-      <form action="#" method="post" enctype="multipart/form-data">
+      <form action="/leafs/<%= @leaf['id'] %>" method="post" enctype="multipart/form-data">
         <!-- Hidden Method -->
         <div class="mb-3">
           <input type="hidden" name="_method" value="post" />
@@ -25,34 +29,35 @@
         <!-- Name Field -->
         <div class="mb-3">
           <label for="name">Name</label>
-          <input type="text" class="form-control" name="name" id="name" value="#" />
+          <input type="text" class="form-control" name="name" id="name" value="<%= @leaf['name'] %>" />
         </div>
 
         <div class="mb-3">
           <label for="type">Type</label>
           <select class="form-select" aria-label="Selected Input" id="type" name="type">
-            <option selected value="#">Select the Type</option>
-            <option value="linear">Linear</option>
-            <option value="ovate">Ovate</option>
-            <option value="elliptical">Elliptical</option>
-            <option value="oblong">Oblong</option>
-            <option value="cordate">Cordate</option>
-            <option value="lanceolate">Lanceolate</option>
+            <option selected value="<%= @leaf['type']%>"><%= @leaf['type']%></option>
+            <option value="Linear">Linear</option>
+            <option value="Ovate">Ovate</option>
+            <option value="Elliptical">Elliptical</option>
+            <option value="Oblong">Oblong</option>
+            <option value="Cordate">Cordate</option>
+            <option value="Lanceolate">Lanceolate</option>
           </select>
         </div>
 
         <div class="mb-3">
           <label for="age">Age</label>
-          <input type="text" class="form-control" name="age" id="age" value="#" />
+          <input type="text" class="form-control" name="age" id="age" value="<%= @leaf['age'] %>" />
         </div>
 
         <div class="form-floating mb-3">
-          <textarea class="form-control" placeholder="Leave a comment here" id="description" style="height: 105px" name="description" value="#"></textarea>
+          <textarea class="form-control" placeholder="Leave a comment here" id="description" style="height: 105px" name="description" value="<%= @leaf['description']%>"><%= @leaf['description']%></textarea>
           <label for="description">My Description</label>
         </div>
 
         <button type="submit" class="btn btn-primary float-end">Update</button>
       </form>
+      <a class="btn btn-light" href="/leafs">Back</a>
     </div>
   </div>
 </div>
