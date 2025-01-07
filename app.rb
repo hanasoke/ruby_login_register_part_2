@@ -907,9 +907,11 @@ post '/adding_tree' do
     end 
 end 
 
-get 'trees/:id/edit' do 
+get '/trees/:id/edit' do 
+    @title = "Edit A Tree"
     # Fetch the tree data by ID
     @tree = DB.get_first_row("SELECT * FROM trees WHERE id = ?", [params[:id]])
+    @errors = []
 
     # Fetch all leaves and seeds for dropdown options
     @leaves = DB.execute("SELECT id, name FROM leafs")
