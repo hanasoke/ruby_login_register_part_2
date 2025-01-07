@@ -857,7 +857,7 @@ end
 
 get '/trees' do 
     @title = 'Trees'
-    @tree = DB.execute("Select * FROM trees")
+    @trees = DB.execute("Select * FROM trees")
     erb :'trees/index', layout: :'layouts/main'
 end 
 
@@ -882,7 +882,7 @@ post '/adding_tree' do
     @errors << "Tree name is required." if tree_name.nil? || tree_name.strip.empty?
     @errors << "Tree type is required." if tree_type.nil? || tree_type.strip.empty?
     @errors << "Leaf must be selected." if tree_leaf_id.nil? || tree_leaf_id.strip.empty?
-    @errors << "Seed must be a valid number." if tree_seed_id.nil? || tree_seed_id.to_i_positive?
+    @errors << "Seed must be a valid number." if tree_seed_id.nil? || tree_seed_id.strip.empty?
     @errors << "Age must be a valid number." unless tree_age.to_i.positive?
 
 
@@ -905,4 +905,15 @@ post '/adding_tree' do
         session[:success] = "The Tree has been successfully added."
         redirect '/trees'
     end 
+end 
+
+get 'trees/:id/edit' do 
+    # Fetch the tree data by ID
+    @tree = DB.get_first_row("SELECT * FROM trees WHERE id = ?", [params[:id]])
+
+    # Fetch all leaves and seeds for dropdown options
+    @leaves = DB.execute("SELECT id, name FROM leafs")
+    @seeds = DB.execute("SELECT id, name FROM seeds")
+
+    erb :'trees/edit', layout: :'layouts/main'
 end 

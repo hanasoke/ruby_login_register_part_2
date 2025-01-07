@@ -20,10 +20,10 @@
   <div class="row">
     <div class="col">
       <!-- Success Alert -->
-      <% if session[:session] %>
+      <% if session[:success] %>
       <div class="alert alert-success alert-dismissible fade show" role="alert">
         <div><%= session[:success]%></div>
-        <button type="button" class="btn-closed" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
       <!-- Clear the flash message -->
       <% session[:success] = nil %> <% end %>
@@ -33,46 +33,50 @@
   <div class="row">
     <div class="col">
       <table class="table table-hover">
-        <tr>
-          <td>No</td>
-          <td>Name</td>
-          <td>Type</td>
-          <td>Leaf Name</td>
-          <td>Age</td>
-          <td>Seed Name</td>
-          <td>Description</td>
-          <td>Action</td>
-        </tr>
+        <thead class="table-dark">
+          <tr>
+            <td>No</td>
+            <td>Name</td>
+            <td>Type</td>
+            <td>Leaf Name</td>
+            <td>Age</td>
+            <td>Seed Name</td>
+            <td>Description</td>
+            <td>Action</td>
+          </tr>
+        </thead>
+        <tbody>
+          <% @trees.each_with_index do |tree, index| %>
+          <tr>
+            <!-- Interaction number starts from 1 -->
+            <td><%= index + 1 %></td>
+            <td><%= tree['name'] %></td>
+
+            <td><%= tree['type'] %></td>
+
+            <!-- Look up the leaf name using leaf_id -->
+            <td><% leaf = DB.get_first_row("SELECT name FROM leafs WHERE id = ?", [tree['leaf_id']]) %> 
+            <%= leaf ? leaf['name'] : 'No leaf found' %></td>
+
+            
+            <td><%= tree['age'] %></td>
+
+            <!-- Look up the seed name using seed_id -->
+            <td><% seed = DB.get_first_row("SELECT name FROM seeds WHERE id = ?", [tree['seed_id']]) %> 
+            <%= seed ? seed['name'] : 'No seed found' %></td>
+
+            <td><%= tree['description'] %></td>
+
+            <td>
+              <div class="btn-group" role="group">
+                <a href="/trees/<%= tree['id'] %>/edit" class="btn btn-info">Edit</a>
+                <button class="btn btn-danger">XXXX</button>
+              </div>
+            </td>
+          </tr>
+          <% end %>
+        </tbody>
       </table>
-      <tbody>
-        <% @trees.each_with_index do |tree, index| %>
-        <tr>
-          <!-- Interaction number starts from 1 -->
-          <td><%= index + 1 %></td>
-          <td><%= tree['name'] %></td>
-
-          <!-- Look up the leaf name using leaf_id -->
-          <td>
-            <%= tree = DB.get_first_row("SELECT name FROM leafs WHERE id = ?", [tree['leaf_id']]) %>
-            <%= leaf ? leaf['name'] : 'No leaf found' %>
-          </td>
-          <td><%= tree['age'] %></td>
-
-          <!-- Look up the seed name using seed_id -->
-          <td>
-            <% seed = DB.get_first_row("SELECT name FROM trees WHERE id = ?", [tree['seed_id']]) %>
-            <%= seed ? seed['name'] : 'No seed found' %>
-          </td>
-          <td><%= tree['description'] %></td>
-          <td>
-            <div class="btn-group" role="group">
-              <a href="/trees/<%= tree['id'] %>/edit" class="btn btn-info">Edit</a>
-              <button>XXXX</button>
-            </div>
-          </td>
-        </tr>
-        <% end %>
-      </tbody>
     </div>
   </div>
 </div>
