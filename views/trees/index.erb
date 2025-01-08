@@ -20,6 +20,19 @@
   <div class="row">
     <div class="col">
       <!-- Success Alert -->
+      <% if session[:error] %>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div><%= session[:error]%></div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <!-- Clear the flash message -->
+      <% session[:error] = nil %> <% end %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <!-- Success Alert -->
       <% if session[:success] %>
       <div class="alert alert-success alert-dismissible fade show" role="alert">
         <div><%= session[:success]%></div>

@@ -925,7 +925,7 @@ get '/trees/:id/edit' do
     @title = "Edit A Tree"
 
     # Fetch the tree data by ID
-    @tree = DB.get_first_row("SELECT * FROM trees WHERE id = ?", [params[:id]])
+    @tree = DB.get_first_row("SELECT * FROM trees WHERE id = ?", [params[:id]]).first
     @errors = []
 
     # Check if the tree exists
@@ -934,6 +934,7 @@ get '/trees/:id/edit' do
         redirect '/trees'
     end
 
+    erb :'trees/edit', layout: :'layouts/main'
     erb :'trees/edit', layout: :'layouts/main'
 end 
 
