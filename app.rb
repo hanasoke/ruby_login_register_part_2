@@ -938,24 +938,16 @@ get '/trees/:id/edit' do
 end 
 
 # POST: Handle tree update
-post '/trees/:id' do 
-    # Fetch parameters from the form
-    tree_id = params[:id]
-    tree_name = params[:name]
-    tree_type = params[:type]
-    tree_leaf_id = params[:leaf_id]
-    tree_seed_id = params[:seed_id]
-    tree_age = params[:age]
-    tree_description = params[:description]
+post '/trees/:id/update' do 
 
     # Validate input
-    @errors = validate_tree(tree_name, tree_type, tree_leaf_id, tree_seed_id, tree_description, tree_id)
+    @errors = validate_tree(params[:name], params[:type], params[:leaf_id], params[:seed_id], params[:age], params[:description], params[:id])
 
     if @errors.empty?
         # Update the tree in the database
         DB.execute(
             "UPDATE trees SET name = ?, type = ?, leaf_id = ?, seed_id = ?, age = ?, description = ? WHERE id = ?",
-            [tree_name, tree_type, tree_leaf_id.to_i, tree_seed_id.to_i, tree_age.to_i, tree_description, tree_id]
+            params[:name], params[:type], params[:leaf_id].to_i, params[:seed_id].to_i, params[:age].to_i, params[:description], params[:id]
         )
 
         # Flash success message and redirect
@@ -964,13 +956,13 @@ post '/trees/:id' do
     else 
         # Re-render the edit form with errors
         @tree = {
-            'id' => tree_id,
-            'name' => tree_name,
-            'type' => tree_type,
-            'leaf_id' => tree_leaf_id,
-            'seed_id' => tree_seed_id,
-            'age' => tree_age,
-            'description' => tree_description
+            'id' => id,
+            'name' => name,
+            'type' => type,
+            'leaf_id' => leaf_id,
+            'seed_id' => seed_id,
+            'age' => age,
+            'description' => description
         }
         erb :'trees/edit', layout: :'layouts/main'
     end 
