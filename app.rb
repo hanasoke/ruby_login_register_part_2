@@ -920,53 +920,58 @@ post '/adding_tree' do
     end 
 end 
 
+# GET: Render the edit form for a tree
 get '/trees/:id/edit' do 
     @title = "Edit A Tree"
+
     # Fetch the tree data by ID
     @tree = DB.get_first_row("SELECT * FROM trees WHERE id = ?", [params[:id]])
     @errors = []
 
-    # Fetch all leaves and seeds for dropdown options
-    @leaves = DB.execute("SELECT id, name FROM leafs")
-    @seeds = DB.execute("SELECT id, name FROM seeds")
+    # Check if the tree exists
+    if @tree.nil?
+        session[:error] = "Tree not found"
+        redirect '/trees'
+    end
 
     erb :'trees/edit', layout: :'layouts/main'
 end 
 
-post '/trees/:id/update' do 
-    # Retrieve form data
-    name = params[:name]
-    type = params[:type]
-    leaf_id = params[:leaf_id]
-    age = params[:age]
-    seed_id = params[:seed_id]
-    description = params[:description]
+# POST: Handle tree update
+post '/trees/:id' do 
+    # Fetch parameters from the form
+    tree_id = params[:id]
+    tree_name = params[:name]
+    tree_type = params[:type]
+    tree_leaf_id = params[:leaf_id]
+    tree_seed_id = params[:seed_id]
+    tree_age = params[:age]
+    tree_description = params[:description]
 
-    # Validate input (optional, based on yout validation logic)
-    errors = []
-    errors << "Name is required." if name.strip.empty?
-    errors << "Type is required." if type.strip.empty?
-    errors << "Leaf is required." if leaf_id.strip.empty?
-    errors << "Age must be a valid number." if seed_id.to_i.positive?
-    errors << "Description is required." if description.strip.empty?
+    # Validate input
+    @errors = validate_tree(tree_name, tree_type, tree_leaf_id, tree_seed_id, tree_description, tree_id)
 
-    if errors.empty?
+    if @errors.empty?
         # Update the tree in the database
         DB.execute(
-            "UPDATE trees SET name = ?, type = ?, leaf_id = ?, age = ?, seed_id = ?, description = ? WHERE id = ?",
-            [name, type, leaf_id, age, seed_id, description, params[:id]]
+            "UPDATE trees SET name = ?, type = ?, leaf_id = ?, seed_id = ?, age = ?, description = ? WHERE id = ?",
+            [tree_name, tree_type, tree_leaf_id.to_i, tree_seed_id.to_i, tree_age.to_i, tree_description, tree_id]
         )
 
-        # Redirect with success message
+        # Flash success message and redirect
         session[:success] = "Tree successfully updated."
-        redirect "/trees"
+        redirect '/trees'
     else 
-        # Re-Render the edit form with error messages
-        @errors = errors 
-
-        @tree = { id: params[:id], name: name, type: type, leaf_id: leaf_id, age: age, seed_id: seed_id, description: description }
-        @leaves = DB.execute("SELECT id, name FROM leafs")
-        @seeds = DB.execute("SELECT ID, name FROM seeds")
+        # Re-render the edit form with errors
+        @tree = {
+            'id' => tree_id,
+            'name' => tree_name,
+            'type' => tree_type,
+            'leaf_id' => tree_leaf_id,
+            'seed_id' => tree_seed_id,
+            'age' => tree_age,
+            'description' => tree_description
+        }
         erb :'trees/edit', layout: :'layouts/main'
     end 
 end 
