@@ -230,22 +230,37 @@ def validate_seed(name, id = nil)
     errors
 end 
 
-helpers do 
-    def validate_tree(name, type, leaf, seed, description) 
-        errors = []
-        errors << "Name is required." if params[:name].nil? || params[:name].strip.empty?
-        errors << "Type is required." if params[:type].nil? || params[:type].strip.empty?
-        errors << "Leaf ID must be valid." unless params[:leaf_id].to_i_positive? 
+def validate_tree(name, type, leaf_id, seed_id, age, description, id = nil)
+    errors = []
 
-        errors << "Seed ID must be valid." unless params[:seed_id].to_i.positive?
+    # Validate name
+    errors << "Name is required." if name.nil? || name.strip.empty?
 
-        errors << "Age must be a valid number." unless params[:age].to_i_positive?
+    # Validate type
+    errors << "Type is required." if type.nil? || type.strip.empty?
 
-        errors << "Description is required." if params[:description].nil? || params[:description].strip.empty?
 
-        errors 
+    # Validate seed foreign key
+    leaf_exists = DB.get_first_value("SELECT COUNT(*) FROM leafs WHERE id = ?", [leaf_id.to_i])
+    errors << "Leaf ID does not exist." unless leaf_exists&.positive? 
+
+    # Validate seed foreign key
+    seed_exists = DB.get_first_value("SELECT COUNT(*) FROM seeds WHERE id = ?", [seed_id.to_i])
+    errors << "Seed ID does not exist." unless seed_exists&.positive?
+    
+    # Validate age
+    if age.nil? || age.strip.empty?
+        errors << "Age cannot be blank."
+    elsif age.to_s !~ /\A\d+(\.\d{1,2})?\z/
+        errors << "Age must be a valid number."
+    elsif age.to_f <= 0
+        errors << "Age must be a positive number."
     end 
-end
+    # Validate description
+    errors << "Description is required." if description.nil? || description.strip.empty?
+
+    errors 
+end 
 
 # Routes 
 get '/' do 
@@ -856,7 +871,7 @@ post '/seeds/:id/delete' do
 end 
 
 get '/trees' do 
-    @title = 'Trees'
+    @title = 'Trees List'
     @trees = DB.execute("Select * FROM trees")
     erb :'trees/index', layout: :'layouts/main'
 end 
@@ -869,41 +884,39 @@ end
 
 # Create a new tree
 post '/adding_tree' do 
-    tree_name = params[:name]
-    tree_type = params[:type]
-    tree_leaf_id = params[:leaf_id]
-    tree_seed_id = params[:seed_id]
-    tree_age = params[:age]
-    tree_description = params[:description]
 
-    @errors = []
-
-    # Validate tree inputs
-    @errors << "Tree name is required." if tree_name.nil? || tree_name.strip.empty?
-    @errors << "Tree type is required." if tree_type.nil? || tree_type.strip.empty?
-    @errors << "Leaf must be selected." if tree_leaf_id.nil? || tree_leaf_id.strip.empty?
-    @errors << "Seed must be a valid number." if tree_seed_id.nil? || tree_seed_id.strip.empty?
-    @errors << "Age must be a valid number." unless tree_age.to_i.positive?
-
-
-    # Check if foreign keys exist
-    leaf_exists = DB.get_first_value("SELECT COUNT(*) FROM leafs WHERE id = ?", [tree_leaf_id.to_i])
-    seed_exists = DB.get_first_value("SELECT COUNT(*) FROM seeds WHERE id = ?", [tree_seed_id.to_i])
-    @errors << "Leaf ID does not exist." unless leaf_exists.positive?
-    @errors << "Seed ID does not exist." unless seed_exists.positive?
+    # Validate the input
+    @errors = validate_tree(
+        params[:name], 
+        params[:type], 
+        params[:leaf_id], 
+        params[:seed_id],
+        params[:age], 
+        params[:description]
+    )
 
     # If there are errors,re-render the form
-    if @errors.any?
-        erb :'trees/add', layout: :'layouts/main'
-    else 
+    if @errors.empty?
         # insert the new tree into the database
         DB.execute(
             "INSERT INTO trees (name, type, leaf_id, seed_id, age, description) VALUES (?, ?, ?, ?, ?, ?)",
-            [tree_name, tree_type, tree_leaf_id.to_i, tree_seed_id.to_i, tree_age.to_i, tree_description]
+            [
+                params[:name],
+                params[:type],
+                params[:leaf_id].to_i,
+                params[:seed_id].to_i,
+                params[:age].to_i,
+                params[:description]
+            ]
         )
+        
         # Flash message
         session[:success] = "The Tree has been successfully added."
         redirect '/trees'
+    else
+        # Render the form with errors and current input values
+        @title = 'Adding a Tree'
+        erb :'trees/add', layout: :'layouts/main'
     end 
 end 
 
@@ -934,7 +947,7 @@ post '/trees/:id/update' do
     errors << "Name is required." if name.strip.empty?
     errors << "Type is required." if type.strip.empty?
     errors << "Leaf is required." if leaf_id.strip.empty?
-    errors << "Age must be a valid number." if seed_id.strip.empty?
+    errors << "Age must be a valid number." if seed_id.to_i.positive?
     errors << "Description is required." if description.strip.empty?
 
     if errors.empty?

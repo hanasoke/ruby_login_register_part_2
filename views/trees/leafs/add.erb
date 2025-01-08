@@ -5,12 +5,14 @@
 
   <div class="row">
     <div class="col">
-      <% if @errors.any? %> <% @errors.each do |error| %>
-      <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <div><%= error %></div>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-      <% end %> <% end %>
+      <% if @errors.any? %> 
+        <% @errors.each do |error| %>
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div><%= error %></div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        <% end %> 
+      <% end %>
     </div>
   </div>
 
