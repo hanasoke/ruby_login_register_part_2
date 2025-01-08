@@ -935,7 +935,6 @@ get '/trees/:id/edit' do
     end
 
     erb :'trees/edit', layout: :'layouts/main'
-    erb :'trees/edit', layout: :'layouts/main'
 end 
 
 # POST: Handle tree update
