@@ -920,15 +920,14 @@ get '/trees/:id/edit' do
     @title = "Edit A Tree"
 
     # Fetch the tree data by ID
-    @tree = DB.get_first_row("SELECT * FROM trees WHERE id = ?", [params[:id]]).first
+    @tree = DB.get_first_row("SELECT * FROM trees WHERE id = ?", [params[:id]])
+    halt 404, "Tree not found" unless @tree
+
+    # Fetch data from dropdowns
+    @leafs = DB.execute("SELECT id, name FROM leafs") || []
+    @seeds = DB.execute("SELECT id, name FROM seeds") || []
+
     @errors = []
-
-    # Check if the tree exists
-    if @tree.nil?
-        session[:error] = "Tree not found"
-        redirect '/trees'
-    end
-
     erb :'trees/edit', layout: :'layouts/main'
 end 
 
@@ -942,25 +941,31 @@ post '/trees/:id' do
         # Update the tree in the database
         DB.execute(
             "UPDATE trees SET name = ?, type = ?, leaf_id = ?, seed_id = ?, age = ?, description = ? WHERE id = ?",
-            params[:name], params[:type], params[:leaf_id].to_i, params[:seed_id].to_i, params[:age].to_i, params[:description], params[:id])
+            [params[:name], params[:type], params[:leaf_id].to_i, params[:seed_id].to_i, params[:age].to_i, params[:description], params[:id]]
+        )
 
         # Flash success message and redirect
         session[:success] = "Tree successfully updated."
         redirect '/trees'
     else 
         # Handle validation errors and re-render the edit form
-        original_tree = DB.execute("SELECT * FROM trees WHERE id = ?", [params[:id]]).first
+        original_tree = DB.execute("SELECT * FROM trees WHERE id = ?", [params[:id]])
 
         # Merge user input with original data to retain user edits
         @tree = {
             'id' => params[:id],
             'name' => params[:name] || original_tree['name'],
             'type' => params[:type] || original_tree['type'],
-            'leaf_id' => params[:leaf_id] || original_leaf['leaf_id'],
-            'seed_id' => params[:seed_id] || original_leaf['seed_id'],
-            'age' => params[:age] || original_leaf['age'],
-            'description' => params[:description] || original_leaf['description']
+            'leaf_id' => params[:leaf_id] || original_tree['leaf_id'],
+            'seed_id' => params[:seed_id] || original_tree['seed_id'],
+            'age' => params[:age] || original_tree['age'],
+            'description' => params[:description] || original_tree['description']
         }
+
+        # Fetch leafs and seeds for dropdowns
+        @leafs = DB.execute("SELECT id, name FROM leafs") || []
+        @seeds = DB.execute("SELECT id, name FROM seeds") || []
+
         erb :'trees/edit', layout: :'layouts/main'
     end 
 end 
