@@ -233,21 +233,16 @@ end
 def validate_tree(name, type, leaf_id, seed_id, age, description, id = nil)
     errors = []
 
-    # Validate name
     errors << "Name is required." if name.nil? || name.strip.empty?
-
-    # Validate type
     errors << "Type is required." if type.nil? || type.strip.empty?
+    errors << "Leaf is required." if leaf_id.nil? || leaf_id.strip.empty?
+    errors << "Seed is required." if seed_id.nil? || seed_id.strip.empty?
 
-
-    # Validate seed foreign key
+    seed_exists = DB.get_first_value("SELECT COUNT(*) FROM seeds WHERE id = ?", [seed_id.to_i])
     leaf_exists = DB.get_first_value("SELECT COUNT(*) FROM leafs WHERE id = ?", [leaf_id.to_i])
     errors << "Leaf ID does not exist." unless leaf_exists&.positive? 
-
-    # Validate seed foreign key
-    seed_exists = DB.get_first_value("SELECT COUNT(*) FROM seeds WHERE id = ?", [seed_id.to_i])
     errors << "Seed ID does not exist." unless seed_exists&.positive?
-    
+     
     # Validate age
     if age.nil? || age.strip.empty?
         errors << "Age cannot be blank."
