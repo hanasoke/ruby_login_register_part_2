@@ -945,7 +945,7 @@ post '/trees/:id' do
         )
 
         # Flash success message and redirect
-        session[:success] = "Tree successfully updated."
+        session[:success] = "The Tree has been successfully updated."
         redirect '/trees'
     else 
         # Handle validation errors and re-render the edit form
