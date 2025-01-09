@@ -933,7 +933,7 @@ get '/trees/:id/edit' do
 end 
 
 # update a tree
-post '/trees/:id/update' do 
+post '/trees/:id' do 
 
     # Validate input
     @errors = validate_tree(params[:name], params[:type], params[:leaf_id], params[:seed_id], params[:age], params[:description], params[:id])
@@ -942,8 +942,7 @@ post '/trees/:id/update' do
         # Update the tree in the database
         DB.execute(
             "UPDATE trees SET name = ?, type = ?, leaf_id = ?, seed_id = ?, age = ?, description = ? WHERE id = ?",
-            params[:name], params[:type], params[:leaf_id].to_i, params[:seed_id].to_i, params[:age].to_i, params[:description], params[:id]
-        )
+            params[:name], params[:type], params[:leaf_id].to_i, params[:seed_id].to_i, params[:age].to_i, params[:description], params[:id])
 
         # Flash success message and redirect
         session[:success] = "Tree successfully updated."

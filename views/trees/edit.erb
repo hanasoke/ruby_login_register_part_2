@@ -8,17 +8,23 @@
   <!-- Error Messages -->
   <div class="row">
     <div class="col">
-      <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <div>Error</div>
-        <button type="button" class="btn btn-close" data-bs-dismiss="alert"></button>
-      </div>
+        <% if @errors.any? %>
+            <% @errors.each do |error| %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <div>
+                        <%= error %>
+                    </div>
+                    <button type="button" class="btn btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <% end %>
+        <% end %>
     </div>
   </div>
 
   <!-- Edit Form -->
   <div class="row">
     <div class="col">
-      <form action="#" method="post" enctype="multipart/form-data">
+      <form action="/trees/<%= @tree['id'] %>" method="post" enctype="multipart/form-data">
         <!-- Hidden Method Field -->
         <input type="hidden" name="_method" value="#" />
 
