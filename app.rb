@@ -932,7 +932,7 @@ get '/trees/:id/edit' do
     erb :'trees/edit', layout: :'layouts/main'
 end 
 
-# POST: Handle tree update
+# update a tree
 post '/trees/:id/update' do 
 
     # Validate input
@@ -949,15 +949,18 @@ post '/trees/:id/update' do
         session[:success] = "Tree successfully updated."
         redirect '/trees'
     else 
-        # Re-render the edit form with errors
+        # Handle validation errors and re-render the edit form
+        original_tree = DB.execute("SELECT * FROM trees WHERE id = ?", [params[:id]]).first
+
+        # Merge user input with original data to retain user edits
         @tree = {
-            'id' => id,
-            'name' => name,
-            'type' => type,
-            'leaf_id' => leaf_id,
-            'seed_id' => seed_id,
-            'age' => age,
-            'description' => description
+            'id' => params[:id],
+            'name' => params[:name] || original_tree['name'],
+            'type' => params[:type] || original_tree['type'],
+            'leaf_id' => params[:leaf_id] || original_leaf['leaf_id'],
+            'seed_id' => params[:seed_id] || original_leaf['seed_id'],
+            'age' => params[:age] || original_leaf['age'],
+            'description' => params[:description] || original_leaf['description']
         }
         erb :'trees/edit', layout: :'layouts/main'
     end 
