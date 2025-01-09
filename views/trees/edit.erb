@@ -1,1 +1,73 @@
+<div class="container">
+  <div class="row">
+    <div class="col my-4">
+      <h1>Edit A Tree</h1>
+    </div>
+  </div>
 
+  <!-- Error Messages -->
+  <div class="row">
+    <div class="col">
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div>Error</div>
+        <button type="button" class="btn btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Form -->
+  <div class="row">
+    <div class="col">
+      <form action="#" method="post" enctype="multipart/form-data">
+        <!-- Hidden Method Field -->
+        <input type="hidden" name="_method" value="#" />
+
+        <!-- Name Field -->
+        <div class="mb-3">
+          <label for="name" class="form-label">Tree Name</label>
+          <input type="text" class="form-control" name="name" id="name" value="#" />
+        </div>
+
+        <!-- Type Dropdown -->
+        <div class="mb-3">
+          <label for="type" class="form-label">Type</label>
+          <select class="form-select" name="type" id="type" type="text" aria-label="Select Tree Type">
+            <option value="#">#</option>
+          </select>
+        </div>
+
+        <!-- Leaf Dropdown -->
+        <div class="mb-3">
+          <label for="leaf_id">Leaf</label>
+          <select class="form-select" type="text" name="leaf_id" id="leaf_id">
+            <option value="#">#</option>
+          </select>
+        </div>
+
+        <!-- Age Field -->
+        <div class="mb-3">
+          <label for="age">Age</label>
+          <input type="number" name="age" id="age" class="form-control" />
+        </div>
+
+        <!-- Seed Dropdown -->
+        <div class="mb-3">
+          <label for="seed_id" class="form-label">Seed</label>
+          <select class="form-select" type="text" name="seed_id" id="seed_id">
+            <option value="#">#</option>
+          </select>
+        </div>
+
+        <!-- Description Field -->
+        <div class="mb-3">
+          <label for="username">Description</label>
+          <textarea class="form-control" name="description" id="description" rows="5">#</textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary float-end">Update</button>
+      </form>
+      <a href="/trees" class="btn btn-light">Back</a>
+    </div>
+  </div>
+</div>
