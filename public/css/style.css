@@ -1,4 +1,5 @@
 .gambar {
   background-image: url('../img/man.jpg');
   background-size: cover;
+  background-position: center;
 }
