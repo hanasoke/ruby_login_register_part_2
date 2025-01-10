@@ -39,7 +39,7 @@ SQL
 # begin 
 #     DB.execute("ALTER TABLE cars ADD COLUMN country TEXT;")
 # rescue SQLite3::SQLException => e 
-#     puts "Column 'country' already exists or another error accored: #{e.message}"
+#     puts "Column 'country' already exists or another error occured: #{e.message}"
 # end 
 
 # Add the `chair` column if it doesn't exist
