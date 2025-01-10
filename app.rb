@@ -145,7 +145,7 @@ def validate_email(email)
     if email.nil? || email.strip.empty?
         errors << "Email cannot be blank."
     elsif email !~ email_regex
-        # check if email matches the regular expressionj
+        # check if email matches the regular expression
         errors << "Email format is invalid"
     end
 
