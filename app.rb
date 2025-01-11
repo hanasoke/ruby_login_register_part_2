@@ -78,7 +78,7 @@ def validate_motor(name, type, brand, chair, country, manufacture, price, id = n
     # Check for unique name 
     query = id ? "SELECT id FROM motors WHERE LOWER(name) = ? AND id != ?" : "SELECT id FROM motors WHERE LOWER(name) = ?"
     existing_motor = DB.execute(query, id ? [name.downcase, id] : [name.downcase]).first
-    errors << "Name already exist. Plase choose a different name." if existing_motor
+    errors << "Name already exist. Please choose a different name." if existing_motor
 
     # Other Validation
     errors << "type cannot be blank." if type.nil? || type.strip.empty?
