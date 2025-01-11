@@ -618,7 +618,7 @@ post '/adding' do
 
     if @errors.empty?
 
-        # Handle file photo upload
+        # Handle photo upload
         if photo && photo[:tempfile]
             photo_filename = "#{Time.now.to_i}_#{photo[:filename]}"
             File.open("./public/uploads/#{photo_filename}", 'wb') do |f|
