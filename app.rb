@@ -375,15 +375,15 @@ end
 post '/profiles/edit' do 
     redirect '/login' unless logged_in?
 
-    # Flash message
-    session[:success] = "Your Profile has been successfully updated"
-
     editing = true 
     @errors = editing_profile(params[:name], params[:username], params[:email], params[:password], params[:re_password], params[:country], editing: editing)
 
     if @errors.empty?
         update_query = "UPDATE profiles SET name = ?, username = ?, email = ?, country = ?"
         params_array = [params[:name], params[:username], params[:email], params[:country]]
+
+        # Flash message
+        session[:success] = "Your Profile has been successfully updated"
 
         # Update password only if provided
         unless params[:password].strip.empty?
