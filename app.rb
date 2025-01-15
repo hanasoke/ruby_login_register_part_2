@@ -519,8 +519,7 @@ end
 
 # Update a car
 post '/cars/:id' do 
-  # Flash message
-  session[:success] = "Car has been successfully updated."
+  
 
   # error variable check   
   @errors = validate_car(params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price], params[:id])
@@ -539,6 +538,9 @@ post '/cars/:id' do
         f.write(photo[:tempfile].read)
       end 
     end 
+
+    # Flash message
+    session[:success] = "Car has been successfully updated."
 
     # Update the car in the database
     DB.execute("UPDATE cars SET name = ?, type = ?, brand = ?, chair = ?, country = ?, manufacture = ?, price = ?, photo = COALESCE(?, photo) WHERE id = ?", 
