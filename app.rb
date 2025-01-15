@@ -483,8 +483,6 @@ end
 
 # Create a new car
 post '/add' do 
-    # Flash message
-    session[:success] = "The Car has been successfully added."
     @errors = validate_car(params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price])
 
     photo = params['photo']
@@ -500,6 +498,9 @@ post '/add' do
                 f.write(photo[:tempfile].read)
             end 
         end 
+
+        # Flash message
+        session[:success] = "The Car has been successfully added."
 
         # Insert car details, including the photo, into the database
         DB.execute("INSERT INTO cars (name, type, brand, chair, country, manufacture, price, photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price], photo_filename])
@@ -524,7 +525,7 @@ post '/cars/:id' do
   # error variable check   
   @errors = validate_car(params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price], params[:id])
 
-#   error photo variable check 
+  # error photo variable check 
   photo = params['photo']
   @errors += validate_photo(photo) if photo && photo[:tempfile] # Validate only if a new photo is provided
 
@@ -589,8 +590,6 @@ end
 
 # Create a new motorcycle 
 post '/adding' do 
-    # Flash message
-    session[:success] = "Motor has been successfully added."
 
     @errors = validate_motor(params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price])
 
@@ -622,6 +621,9 @@ post '/adding' do
             end 
         end 
 
+        # Flash message
+        session[:success] = "Motor has been successfully added."
+
         # Insert motor details, including the photo, into the database
         DB.execute("INSERT INTO motors (name, type, brand, chair, country, manufacture, price, photo, warranty) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price], photo_filename, file_filename])
         
@@ -641,9 +643,6 @@ end
 
 # Update a motor
 post '/motors/:id' do 
-
-    # Flash message
-    session[:success] = "Motor has been successfully updated."
 
     @errors = validate_motor(params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price], params[:id])
 
@@ -674,6 +673,9 @@ post '/motors/:id' do
             f.write(file[:tempfile].read)
         end
     end  
+
+    # Flash message
+    session[:success] = "Motor has been successfully updated."
 
     # Update the car in the database
     DB.execute("UPDATE motors SET name = ?, type = ?, brand = ?, chair = ?, country = ?, manufacture = ?, price = ?, photo = COALESCE(?, photo), warranty = COALESCE(?, warranty) WHERE id = ?", 
@@ -823,11 +825,11 @@ end
 
 # Update a seed
 post '/seeds/:id' do 
-    # Flash message
-    session[:success] = "A Seed has been successfully updated."
     @errors = validate_seed(params[:name], params[:id])
 
     if @errors.empty?
+        # Flash message
+        session[:success] = "A Seed has been successfully updated."
         # Update the car in the database
         DB.execute("UPDATE seeds SET name = ? WHERE id = ?", 
             [params[:name], params[:id]])
