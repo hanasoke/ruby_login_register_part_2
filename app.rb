@@ -520,8 +520,6 @@ end
 
 # Update a car
 post '/cars/:id' do 
-  
-
   # error variable check   
   @errors = validate_car(params[:name], params[:type], params[:brand], params[:chair], params[:country], params[:manufacture], params[:price], params[:id])
 
