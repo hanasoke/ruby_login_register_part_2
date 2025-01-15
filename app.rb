@@ -110,17 +110,11 @@ def validate_motor(name, type, brand, chair, country, manufacture, price, id = n
     errors
 end
 
-def editing_profile(name, username, email, password, re_password, country, editing: false)
+def editing_profile(name, username, email, country, editing: false)
     errors = []
     errors << "Username cannot be blank." if username.nil? || username.strip.empty?
     errors << "Name cannot be blank." if name.nil? || name.strip.empty?
     errors << "Country cannot be blank." if country.nil? || country.strip.empty?
-
-    # Skip password validation if editing and password is blank
-    unless editing && (password.nil? || password.strip.empty?)
-        errors << "Password cannot be blank." if password.nil? || password.strip.empty?
-        errors << "Passwords do not match." if password != re_password
-    end
     
     # Validate email
     errors.concat(validate_email(email))
@@ -376,7 +370,7 @@ post '/profiles/edit' do
     redirect '/login' unless logged_in?
 
     editing = true 
-    @errors = editing_profile(params[:name], params[:username], params[:email], params[:password], params[:re_password], params[:country], editing: editing)
+    @errors = editing_profile(params[:name], params[:username], params[:email], params[:country], editing: editing)
 
     if @errors.empty?
         update_query = "UPDATE profiles SET name = ?, username = ?, email = ?, country = ?"
@@ -384,13 +378,6 @@ post '/profiles/edit' do
 
         # Flash message
         session[:success] = "Your Profile has been successfully updated"
-
-        # Update password only if provided
-        unless params[:password].strip.empty?
-            hashed_password = BCrypt::Password.create(params[:password])
-            update_query += ", password = ?"
-            params_array << hashed_password
-        end 
 
         update_query += " WHERE id = ?"
         params_array << session[:profile_id]
@@ -405,7 +392,7 @@ post '/profiles/edit' do
             'country' => params[:country]
         }
 
-        erb :'profile/edit', layout: :'layouts/admin'
+        erb :'profile/edit', layout: :'layouts/main'
     end 
 end
 
