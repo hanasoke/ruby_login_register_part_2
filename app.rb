@@ -38,7 +38,7 @@ def validate_car(name, type, brand, chair, country, manufacture, price, id = nil
     # Check for unique name 
     query = id ? "SELECT id FROM cars WHERE LOWER(name) = ? AND id != ?" : "SELECT id FROM cars WHERE LOWER(name) = ?"
     existing_car = DB.execute(query, id ? [name.downcase, id] : [name.downcase]).first
-    errors << "Name already exist. Plase choose a different name." if existing_car
+    errors << "Name already exist. Plaase choose a different name." if existing_car
 
     # Other Validation
     errors << "type cannot be blank." if type.nil? || type.strip.empty?
