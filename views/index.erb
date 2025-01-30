@@ -6,6 +6,18 @@
   </div>
   <div class="row">
     <div class="col">
+      <!-- Success Alert -->
+      <% if session[:success] %>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div><%= session[:success] %></div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <!-- Clear the flash message -->
+      <% session[:success] = nil %> <% end %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
       <div class="card" style="width: 20rem">
         <div class="card-body">
           <h6 class="card-subtitle mb-2 text-body-secondary">Username : <%= current_profile['username']%></h6>

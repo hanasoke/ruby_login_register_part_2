@@ -344,12 +344,6 @@ get '/profiles/:id/view' do
     erb :'user/view', layout: :'layouts/main' 
 end
 
-get '/profiles/:id/view' do 
-    @title = "Edit the Profile"
-    @profile = DB.execute("SELECT * FROM profiles WHERE id = ?", [params[:id]]).first
-    erb :'profile/edit', layout: :'layouts/main'
-end 
-
 # logout
 get '/logout' do 
     session.clear 
@@ -376,11 +370,12 @@ post '/profiles/edit' do
         update_query = "UPDATE profiles SET name = ?, username = ?, email = ?, country = ?"
         params_array = [params[:name], params[:username], params[:email], params[:country]]
 
-        # Flash message
-        session[:success] = "Your Profile has been successfully updated"
 
         update_query += " WHERE id = ?"
         params_array << session[:profile_id]
+
+        # Flash message
+        session[:success] = "Your Profile has been successfully updated"
 
         DB.execute(update_query, params_array)
         redirect '/'
