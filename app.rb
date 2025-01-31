@@ -520,7 +520,9 @@ post '/cars/:id' do
 
   # error photo variable check 
   photo = params['photo']
-  @errors += validate_photo(photo) if photo && photo[:tempfile] # Validate only if a new photo is provided
+
+  # Validate only if a new photo is provided
+  @errors += validate_photo(photo) if photo && photo[:tempfile] 
 
   photo_filename = nil 
 
